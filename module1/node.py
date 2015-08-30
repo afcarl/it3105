@@ -20,9 +20,11 @@ class Node:
         self.f = self.g + self.h
 
     def get_children(self):
-        north = Point(self.position.x, self.position.y + 1)
-        south = Point(self.position.x, self.position.y - 1)
-        east = Point(self.position.x + 1, self.position.y)
-        west = Point(self.position.x - 1, self.position.y)
-        #if north.is_inside(self.board.dimensions):
+        children = [
+            (self.position.x, self.position.y + 1),
+            (self.position.x, self.position.y - 1),
+            (self.position.x + 1, self.position.y),
+            (self.position.x - 1, self.position.y)
+        ]
+
 

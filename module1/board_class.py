@@ -7,17 +7,21 @@ class Board:
         "ACTIVE": 3
     }
 
-    def __init__(self, dimensions, start, goal):
+    def __init__(self, dimensions, start, goal, barriers):
         self.tiles = []
         for i in range(dimensions.height):
             self.tiles.append([])
             for j in range(dimensions.width):
                 self.tiles[i].append(0)
 
-        self.dimensions = dimensions
+        self.rect = dimensions
         self.start = start
         self.goal = goal
+        self.inaccessible_tiles = set()
+        for barrier in barriers:
+            self.inaccessible_tiles |= barrier.get_border_tiles()
 
     def is_tile_accessible(self, point):
-        if not point.is_inside(self.dimensions):
+        if point in self.inaccessible_tiles or not point.is_inside(self.rect):
             return False
+        return True
