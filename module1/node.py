@@ -20,11 +20,14 @@ class Node:
         self.f = self.g + self.h
 
     def get_children(self):
-        children = [
-            (self.position.x, self.position.y + 1),
-            (self.position.x, self.position.y - 1),
-            (self.position.x + 1, self.position.y),
-            (self.position.x - 1, self.position.y)
-        ]
-
-
+        children = set()
+        candidates = {
+            Point(self.position.x, self.position.y + 1),
+            Point(self.position.x, self.position.y - 1),
+            Point(self.position.x + 1, self.position.y),
+            Point(self.position.x - 1, self.position.y)
+        }
+        for child in candidates:
+            if self.board.is_tile_accessible(child):
+                children.add(child)
+        return children

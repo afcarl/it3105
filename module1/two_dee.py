@@ -1,11 +1,7 @@
 class Point:
-    def __init__(self, *args):
-        if len(args) == 1:
-            self.x = args[0][0]
-            self.y = args[0][1]
-        else:
-            self.x = args[0]
-            self.y = args[1]
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
     def is_inside(self, rect):
         if self.x < rect.x:
@@ -20,6 +16,9 @@ class Point:
 
     def manhattan_distance_to(self, point):
         return abs(point.x - self.x) + abs(point.y - self.y)
+
+    def as_tuple(self):
+        return self.x, self.y
 
     def __str__(self):
         return "x:" + str(self.x) + \
