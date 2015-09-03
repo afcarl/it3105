@@ -3,6 +3,8 @@ from ast import literal_eval
 from two_dee import Point, Rect
 from node import Node
 from board import Board
+from gfx import Gfx
+
 
 class Main:
     def __init__(self):
@@ -14,6 +16,8 @@ class Main:
 
         dimensions, start, goal, barriers = self.parse_lines(lines)
         self.board = Board(dimensions, start, goal, barriers)
+
+        self.gfx = Gfx(self.board)
 
         result = self.run()
         print 'result', result
@@ -55,6 +59,8 @@ class Main:
                 print child
                 # if exist in closed or open list, use the existing node
                 pass
+
+            self.gfx.draw(current_node)
 
 if __name__ == '__main__':
     Main()

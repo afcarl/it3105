@@ -17,6 +17,7 @@ class Board:
         self.rect = dimensions
         self.start = start
         self.goal = goal
+        self.barriers = barriers
         self.inaccessible_tiles = set()
         for barrier in barriers:
             self.inaccessible_tiles |= barrier.get_border_tiles()

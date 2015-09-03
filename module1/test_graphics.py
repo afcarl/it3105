@@ -11,9 +11,15 @@ screen = pygame.display.set_mode(size)
 ball = pygame.image.load("ball.bmp")
 ballrect = ball.get_rect()
 
+clock = pygame.time.Clock()
+
+fps = 30.0
+
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+
+    ms_elapsed = clock.tick(fps)
 
     ballrect = ballrect.move(speed)
     if ballrect.left < 0 or ballrect.right > width:
