@@ -1,15 +1,19 @@
 import sys, pygame
 from two_dee import Point
+
 pygame.init()
 
 
 class Gfx(object):
     size = width, height = 960, 540
-    BLACK = 0, 0, 0
-    RED = 255, 0, 0
-    GREEN = 0, 255, 0
-    GREY = 128, 128, 128
-    BLUE = 0, 0, 255
+    WHITE = 255, 255, 255  # undiscovered tiles
+    BLACK = 0, 0, 0  # closed tiles
+    YELLOW = 255, 236, 193  # open tiles
+    GREEN = 47, 160, 19  # goal
+    GREY = 128, 128, 128  # barriers
+    BLUE = 109, 142, 224  # start
+    PINK = 255, 130, 234  # current node
+    DARK_PINK = 178, 110, 149  # nodes backtracked from current node
 
     def __init__(self, board):
         self.board = board
@@ -46,15 +50,24 @@ class Gfx(object):
     def draw_goal(self):
         self.draw_tile(self.board.goal.x, self.board.goal.y, self.GREEN)
 
+    def draw_current_node(self, node):
+        self.draw_tile(node.x, node.y, self.PINK)
+
+    def draw_ancestors(self, ancestors):
+        for ancestor in ancestors:
+            self.draw_tile(ancestor.x, ancestor.y, self.DARK_PINK)
+
     def draw(self, current_node):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
-        self.screen.fill(self.BLACK)
+        self.screen.fill(self.WHITE)
 
         self.draw_barriers()
-        self.draw_start()
         self.draw_goal()
+        self.draw_current_node(current_node)
+        self.draw_ancestors(current_node.get_ancestors())
+        self.draw_start()
 
         pygame.display.flip()

@@ -14,21 +14,27 @@ class TestNode(unittest.TestCase):
 
         position1 = Point(8, 9)
         node1 = Node(board, position1, 0)
-
         position2 = Point(8, 10)
         node2 = Node(board, position2, 1, None, node1)
-
         node3 = Node(board, position1, 2, None, node2)
 
+        # test equals()
         self.assertTrue(node1.equals(node1))
         self.assertFalse(node1.equals(node2))
         self.assertTrue(node1.equals(node3))
 
+        # test as_tuple()
         self.assertEquals(node1.as_tuple(), (8, 9))
 
+        # test is_solution()
         goal_node = Node(board, goal, 3, None, node3)
         self.assertTrue(goal_node.is_solution())
 
+        # test get_ancestors()
+        ancestors = goal_node.get_ancestors()
+        self.assertTrue(ancestors[0].equals(node3))
+        self.assertTrue(ancestors[1].equals(node2))
+        self.assertTrue(ancestors[2].equals(node1))
 
 if __name__ == '__main__':
     unittest.main()

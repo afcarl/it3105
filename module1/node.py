@@ -39,3 +39,13 @@ class Node(Point):
 
     def is_solution(self):
         return self.equals(self.board.goal)
+
+    def get_ancestors(self):
+        ancestors = []
+        current_node = self
+        while True:
+            if current_node.parent is None:
+                return ancestors
+            else:
+                ancestors.append(current_node.parent)
+                current_node = current_node.parent
