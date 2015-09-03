@@ -1,8 +1,9 @@
 from two_dee import Point
 
 
-class Node:
+class Node(Point):
     def __init__(self, board, position, g, h=None, parent=None):
+        super(Node, self).__init__(position.x, position.y)
         self.board = board
         self.position = position
         self.parent = parent
@@ -19,15 +20,22 @@ class Node:
     def calculate_f(self):
         self.f = self.g + self.h
 
+    def calculate_h(self):
+        self.h = self.position.manhattan_distance_to(self.board.goal)
+
     def get_children(self):
         children = set()
-        candidates = {
+        candidate_positions = {
             Point(self.position.x, self.position.y + 1),
             Point(self.position.x, self.position.y - 1),
             Point(self.position.x + 1, self.position.y),
             Point(self.position.x - 1, self.position.y)
         }
-        for child in candidates:
-            if self.board.is_tile_accessible(child):
+        for position in candidate_positions:
+            if self.board.is_tile_accessible(position):
+                child = Node(self.board, position, self.g + 1, None, self)
                 children.add(child)
         return children
+
+    def is_solution(self):
+        return self.equals(self.board.goal)

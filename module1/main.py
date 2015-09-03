@@ -38,15 +38,23 @@ class Main:
         open_list = []
         closed_list = []
         start_node = Node(self.board, position=self.board.start, g=0)
-        start_node.h = start_node.position.manhattan_distance_to(self.board.goal)
+        start_node.calculate_h()
         start_node.calculate_f()
         open_list.append(start_node)
 
-        for num_iterations in range(50000000):
+        max_num_iterations = 50000000
+        for num_iterations in range(max_num_iterations):
             if len(open_list) == 0:
                 return False  # Fail
             current_node = open_list.pop()
             closed_list.append(current_node)
+            if current_node.is_solution():
+                return current_node
+            children = current_node.get_children()
+            for child in children:
+                print child
+                # if exist in closed or open list, use the existing node
+                pass
 
 if __name__ == '__main__':
     Main()

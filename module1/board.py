@@ -20,7 +20,6 @@ class Board:
         self.inaccessible_tiles = set()
         for barrier in barriers:
             self.inaccessible_tiles |= barrier.get_border_tiles()
-        print self.inaccessible_tiles
 
     def is_tile_accessible(self, point):
         if point.as_tuple() in self.inaccessible_tiles or not point.is_inside(self.rect):
