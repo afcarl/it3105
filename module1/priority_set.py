@@ -1,19 +1,25 @@
 import heapq
 
-class PrioritySet(object):
+class NodePrioritySet(object):
     def __init__(self):
-        self.my_heap = []
-        self.my_set = set()
+        self.heap = []
+        self.dict = {}
 
-    def add(self, item, priority):
-        if item not in self.my_set:
-            heapq.heappush(self.my_heap, (priority, item))
-            self.my_set.add(item)
+    def add(self, node, priority):
+        if node not in self.dict:
+            heapq.heappush(self.heap, (priority, node))
+            self.dict[node] = node
 
     def pop(self):
-        priority, item = heapq.heappop(self.my_heap)
-        self.my_set.remove(item)
+        priority, item = heapq.heappop(self.heap)
+        del self.dict[item]
         return item
 
-    def exists(self, item):
-        return item in self.my_set
+    def __getitem__(self, node):
+        return self.dict[node]
+
+    def __contains__(self, node):
+        return node in self.dict
+
+    def is_empty(self):
+        return len(self.heap) == 0

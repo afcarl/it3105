@@ -49,3 +49,9 @@ class Node(Point):
             else:
                 ancestors.append(current_node.parent)
                 current_node = current_node.parent
+
+    def __eq__(self, other_node):
+        return self.as_tuple() == other_node.as_tuple()
+
+    def __hash__(self):
+        return hash(self.as_tuple())

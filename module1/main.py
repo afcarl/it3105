@@ -4,6 +4,7 @@ from two_dee import Point, Rect
 from node import Node
 from board import Board
 from gfx import Gfx
+from priority_set import NodePrioritySet
 
 
 class Main:
@@ -39,28 +40,25 @@ class Main:
         return dimensions, start, goal, barriers
 
     def run(self):
-        # TODO: use heapq and set for open and closed list
-
-        open_list = []
-        closed_list = []
+        open_list = NodePrioritySet()
+        closed_list = set()
         start_node = Node(self.board, position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
-        open_list.append(start_node.as_tuple())
+        open_list.add(start_node, start_node.h)
 
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
-            if len(open_list) == 0:
+            if open_list.is_empty() == 0:
                 return False  # Fail
             current_node = open_list.pop()
-            closed_list.append(current_node)
+            closed_list.add(current_node)
             if current_node.is_solution():
                 return current_node
             children = current_node.get_children()
             for child in children:
-                child_as_tuple = child.as_tuple()
-                if child_as_tuple in open_list:
-                    child = open_list[child_as_tuple]
+                if child in open_list:
+                    child = open_list[child]
                 elif child_as_tuple in closed_list:
                     child = closed_list[child_as_tuple]
 
