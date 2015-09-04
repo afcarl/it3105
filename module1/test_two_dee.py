@@ -1,5 +1,6 @@
 import unittest
-from two_dee import Point, Rect
+from rect import Rect
+from point import Point
 
 
 class TestTwoDee(unittest.TestCase):

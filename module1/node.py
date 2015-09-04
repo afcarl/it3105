@@ -1,4 +1,4 @@
-from two_dee import Point
+from point import Point
 
 class Node(Point):
     H_MULTIPLIER = 1

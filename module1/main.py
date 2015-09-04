@@ -1,6 +1,7 @@
 import sys
 from ast import literal_eval
-from two_dee import Point, Rect
+from rect import Rect
+from point import Point
 from node import Node
 from board import Board
 from gfx import Gfx
@@ -74,11 +75,11 @@ class Main:
         start_node.calculate_f()
         open_list.add(start_node, start_node.f)
 
-        def attach_and_eval(current_node, child):
-            child.set_g(current_node.g + current_node.get_arc_cost(child))
-            child.calculate_h()
-            child.calculate_f()
-            child.set_parent(current_node)
+        def attach_and_eval(parent_node, child_node):
+            child_node.set_g(parent_node.g + parent_node.get_arc_cost(child_node))
+            child_node.calculate_h()
+            child_node.calculate_f()
+            child_node.set_parent(parent_node)
 
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):

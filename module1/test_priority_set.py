@@ -1,7 +1,6 @@
 import unittest
 from priority_set import NodePrioritySet
-from two_dee import Point, Rect
-from board import Board
+from point import Point
 from node import Node
 
 
