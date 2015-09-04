@@ -44,6 +44,7 @@ class Main:
 
         dimensions, start, goal, barriers = self.parse_lines(lines)
         self.board = Board(dimensions, start, goal, barriers)
+        Node.board = self.board
 
         self.gfx = Gfx(self.board)
 
@@ -68,7 +69,7 @@ class Main:
     def run(self):
         open_list = NodePrioritySet()
         closed_list = {}
-        start_node = Node(board=self.board, position=self.board.start, g=0)
+        start_node = Node(position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
         open_list.add(start_node, start_node.f)

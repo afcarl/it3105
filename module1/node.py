@@ -1,13 +1,12 @@
 from two_dee import Point
 
-
 class Node(Point):
     H_MULTIPLIER = 1
     ARC_COST_MULTIPLIER = 1
+    board = None
 
-    def __init__(self, board, position, g=None, h=None, parent=None):
+    def __init__(self, position, g=None, h=None, parent=None):
         super(Node, self).__init__(position.x, position.y)
-        self.board = board
         self.position = position
         self.parent = parent
         self.g = g
@@ -36,7 +35,7 @@ class Node(Point):
         }
         for position in candidate_positions:
             if self.board.is_tile_accessible(position):
-                child = Node(self.board, position, None, None, self)
+                child = Node(position, None, None, self)
                 children.add(child)
         return children
 

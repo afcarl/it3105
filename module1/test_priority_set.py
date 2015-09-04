@@ -7,21 +7,15 @@ from node import Node
 
 class TestNodePrioritySet(unittest.TestCase):
     def test_methods(self):
-        self.dimensions = Rect(0, 0, 3, 3)
-        self.start = Point(0, 0)
-        self.goal = Point(2, 2)
-        self.barriers = []
-        self.board = Board(self.dimensions, self.start, self.goal, self.barriers)
-
-        self.node1 = Node(self.board, Point(0, 0), 2, 4)
+        self.node1 = Node(Point(0, 0), 2, 4)
         self.node1.calculate_f()
-        self.node2 = Node(self.board, Point(1, 0), 2, 3)
+        self.node2 = Node(Point(1, 0), 2, 3)
         self.node2.calculate_f()
-        self.node3 = Node(self.board, Point(2, 0), 2, 2)
+        self.node3 = Node(Point(2, 0), 2, 2)
         self.node3.calculate_f()
-        self.node4 = Node(self.board, Point(2, 1), 2, 1)
+        self.node4 = Node(Point(2, 1), 2, 1)
         self.node4.calculate_f()
-        self.node5 = Node(self.board, Point(2, 0), 3, 2)  # like node3
+        self.node5 = Node(Point(2, 0), 3, 2)  # like node3
 
         my_collection = NodePrioritySet()
         my_collection.add(self.node2, self.node2.f)
@@ -47,15 +41,9 @@ class TestNodePrioritySet(unittest.TestCase):
         self.assertFalse(self.node1 in my_collection)
 
     def test_first_in_first_out(self):
-        self.dimensions = Rect(0, 0, 3, 3)
-        self.start = Point(0, 0)
-        self.goal = Point(2, 2)
-        self.barriers = []
-        self.board = Board(self.dimensions, self.start, self.goal, self.barriers)
-
-        self.node1 = Node(self.board, Point(0, 2), 2, 2)
-        self.node2 = Node(self.board, Point(1, 1), 2, 2)
-        self.node3 = Node(self.board, Point(2, 0), 2, 2)
+        self.node1 = Node(Point(0, 2), 2, 2)
+        self.node2 = Node(Point(1, 1), 2, 2)
+        self.node3 = Node(Point(2, 0), 2, 2)
 
         my_collection = NodePrioritySet()
         my_collection.add(self.node1, 4)

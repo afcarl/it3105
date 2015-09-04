@@ -10,13 +10,13 @@ class TestNode(unittest.TestCase):
         start = Point(3, 4)
         goal = Point(8, 11)
         barriers = []
-        board = Board(dimensions, start, goal, barriers)
+        Node.board = Board(dimensions, start, goal, barriers)
 
         position1 = Point(8, 9)
-        node1 = Node(board, position1, 0)
+        node1 = Node(position1, 0)
         position2 = Point(8, 10)
-        node2 = Node(board, position2, 1, None, node1)
-        node3 = Node(board, position1, 2, None, node2)
+        node2 = Node(position2, 1, None, node1)
+        node3 = Node(position1, 2, None, node2)
 
         # test equals()
         self.assertTrue(node1.equals(node1))
@@ -27,7 +27,7 @@ class TestNode(unittest.TestCase):
         self.assertEquals(node1.as_tuple(), (8, 9))
 
         # test is_solution()
-        goal_node = Node(board, goal, 3, None, node3)
+        goal_node = Node(goal, 3, None, node3)
         self.assertTrue(goal_node.is_solution())
 
         # test get_ancestors()
