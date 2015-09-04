@@ -35,7 +35,7 @@ class Main:
             Node.H_MULTIPLIER = 0
         elif args.mode == 'dfs':
             Node.H_MULTIPLIER = 0
-            Node.ARC_COST_MULTIPLIER = -1
+            Node.ARC_COST_MULTIPLIER = 0
 
         f = open(args.filename)
         lines = []
