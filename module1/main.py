@@ -82,7 +82,7 @@ class Main:
                 elif False and True:  # TODO
                     pass  # TODO
 
-        print 'Failed to find a solution within the maximum number of iterations'
+        print 'Failed to find a solution within the max number of iterations,', max_num_iterations
         return False
 
 

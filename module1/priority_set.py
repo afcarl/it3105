@@ -23,5 +23,8 @@ class NodePrioritySet(object):
     def __contains__(self, node):
         return node in self.dict
 
+    def __iter__(self):
+        return self.dict.__iter__()
+
     def is_empty(self):
         return len(self.heap) == 0

@@ -51,7 +51,7 @@ class Gfx(object):
             self.draw_tile(tile.x, tile.y, self.BLACK)
 
     def draw_open_list(self, open_list):
-        for tile in open_list.dict:
+        for tile in open_list:
             self.draw_tile(tile.x, tile.y, self.YELLOW)
 
     def draw_start(self):
