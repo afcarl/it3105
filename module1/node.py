@@ -2,6 +2,9 @@ from two_dee import Point
 
 
 class Node(Point):
+    H_MULTIPLIER = 1
+    ARC_COST_MULTIPLIER = 1
+
     def __init__(self, board, position, g=None, h=None, parent=None):
         super(Node, self).__init__(position.x, position.y)
         self.board = board
@@ -21,7 +24,7 @@ class Node(Point):
         self.f = self.g + self.h
 
     def calculate_h(self):
-        self.h = self.position.manhattan_distance_to(self.board.goal)
+        self.h = self.position.manhattan_distance_to(self.board.goal) * Node.H_MULTIPLIER
 
     def get_children(self):
         children = set()
@@ -57,5 +60,5 @@ class Node(Point):
         return hash(self.as_tuple())
 
     @staticmethod
-    def get_arc_cost():
-        return 1
+    def get_arc_cost(other_node):
+        return Node.ARC_COST_MULTIPLIER

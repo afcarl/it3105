@@ -5,11 +5,38 @@ from node import Node
 from board import Board
 from gfx import Gfx
 from priority_set import NodePrioritySet
+import argparse
 
 
 class Main:
     def __init__(self):
-        f = open(sys.argv[1]) if len(sys.argv) > 1 else sys.stdin
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument(
+            '-i',
+            '--input',
+            dest='filename',
+            type=str,
+            help='The name of the input file',
+            required=True
+        )
+        arg_parser.add_argument(
+            '-m',
+            '--mode',
+            dest='mode',
+            type=str,
+            choices=['astar', 'bfs', 'dfs'],
+            required=False,
+            default="astar"
+        )
+        args = arg_parser.parse_args()
+
+        if args.mode == 'bfs':
+            Node.H_MULTIPLIER = 0
+        elif args.mode == 'dfs':
+            Node.H_MULTIPLIER = 0
+            Node.ARC_COST_MULTIPLIER = -1
+
+        f = open(args.filename)
         lines = []
         for line in f:
             lines.append(line.strip())
@@ -41,7 +68,7 @@ class Main:
     def run(self):
         open_list = NodePrioritySet()
         closed_list = {}
-        start_node = Node(self.board, position=self.board.start, g=0)
+        start_node = Node(board=self.board, position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
         open_list.add(start_node, start_node.f)
@@ -74,7 +101,7 @@ class Main:
                     previously_generated = True
 
                 if not previously_generated:
-                    child.set_g(current_node.g + child.get_arc_cost())
+                    child.set_g(current_node.g + current_node.get_arc_cost(child))
                     child.calculate_h()
                     child.calculate_f()
                     child.set_parent(current_node)
