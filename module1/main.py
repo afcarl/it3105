@@ -50,7 +50,7 @@ class Main:
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
-                return False  # Fail
+                return False
             current_node = open_list.pop()
             closed_list[current_node] = current_node
             self.gfx.draw(current_node, closed_list, open_list)
@@ -81,6 +81,10 @@ class Main:
                     open_list.add(child, child.f)
                 elif False and True:  # TODO
                     pass  # TODO
+
+        print 'Failed to find a solution within the maximum number of iterations'
+        return False
+
 
 if __name__ == '__main__':
     Main()
