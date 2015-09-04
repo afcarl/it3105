@@ -1,3 +1,5 @@
+import math
+
 class Point(object):
     def __init__(self, x, y):
         self.x = x
@@ -16,6 +18,9 @@ class Point(object):
 
     def manhattan_distance_to(self, point):
         return abs(point.x - self.x) + abs(point.y - self.y)
+
+    def euclidean_distance_to(self, point):
+        return math.sqrt((point.x - self.x)**2 + (point.y - self.y)**2)
 
     def as_tuple(self):
         return self.x, self.y

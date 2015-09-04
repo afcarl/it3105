@@ -13,7 +13,7 @@ class Gfx(object):
     BLUE = 109, 142, 224  # start
     PINK = 255, 130, 234  # current node
     DARK_PINK = 178, 110, 149  # nodes backtracked from current node
-    FPS = 4.0
+    FPS = 16.0
 
     def __init__(self, board):
         self.board = board
@@ -46,6 +46,14 @@ class Gfx(object):
         for tile in self.board.inaccessible_tiles:
             self.draw_tile(tile[0], tile[1], self.GREY)
 
+    def draw_closed_list(self, closed_list):
+        for tile in closed_list:
+            self.draw_tile(tile.x, tile.y, self.BLACK)
+
+    def draw_open_list(self, open_list):
+        for tile in open_list.dict:
+            self.draw_tile(tile.x, tile.y, self.YELLOW)
+
     def draw_start(self):
         self.draw_tile(self.board.start.x, self.board.start.y, self.BLUE)
 
@@ -59,7 +67,7 @@ class Gfx(object):
         for ancestor in ancestors:
             self.draw_tile(ancestor.x, ancestor.y, self.DARK_PINK)
 
-    def draw(self, current_node):
+    def draw(self, current_node, closed_list, open_list):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -76,11 +84,11 @@ class Gfx(object):
         self.screen.fill(self.WHITE)
 
         self.draw_barriers()
+        self.draw_closed_list(closed_list)
+        self.draw_open_list(open_list)
         self.draw_goal()
         self.draw_current_node(current_node)
         self.draw_ancestors(current_node.get_ancestors())
         self.draw_start()
-
-        # TODO: draw open list and closed list? dunno if necessary
 
         pygame.display.flip()

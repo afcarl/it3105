@@ -20,8 +20,7 @@ class Main:
 
         self.gfx = Gfx(self.board)
 
-        result = self.run()
-        print 'result', result
+        self.run()
 
     @staticmethod
     def parse_lines(lines):
@@ -50,10 +49,19 @@ class Main:
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
+                print 'Failed to find a solution'
                 return False  # Fail
             current_node = open_list.pop()
             closed_list[current_node] = current_node
+            self.gfx.draw(current_node, closed_list, open_list)
             if current_node.is_solution():
+                print "number of iterations:", num_iterations
+                ancestors = current_node.get_ancestors()
+                print "path length:", len(ancestors)
+                print "backtracked path:"
+                print current_node
+                for ancestor in ancestors:
+                    print ancestor
                 return current_node
             children = current_node.get_children()
             for child in children:
@@ -73,8 +81,6 @@ class Main:
                     open_list.add(child, child.f)
                 elif False and True:  # TODO
                     pass  # TODO
-
-            self.gfx.draw(current_node)
 
 if __name__ == '__main__':
     Main()
