@@ -41,7 +41,7 @@ class Main:
 
     def run(self):
         open_list = NodePrioritySet()
-        closed_list = set()
+        closed_list = {}
         start_node = Node(self.board, position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
@@ -49,20 +49,30 @@ class Main:
 
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
-            if open_list.is_empty() == 0:
+            if open_list.is_empty():
                 return False  # Fail
             current_node = open_list.pop()
-            closed_list.add(current_node)
+            closed_list[current_node] = current_node
             if current_node.is_solution():
                 return current_node
             children = current_node.get_children()
             for child in children:
+                previously_generated = False
                 if child in open_list:
-                    child = open_list[child]
-                elif child_as_tuple in closed_list:
-                    child = closed_list[child_as_tuple]
+                    child = open_list[child]  # re-use previously generated node
+                    previously_generated = True
+                elif child in closed_list:
+                    child = closed_list[child]  # re-use previously generated node
+                    previously_generated = True
 
-                # if exist in closed or open list, use the existing node
+                if not previously_generated:
+                    child.set_g(current_node.g + child.get_arc_cost())
+                    child.calculate_h()
+                    child.calculate_f()
+                    child.set_parent(current_node)
+                    open_list.add(child, child.f)
+                elif False and True:  # TODO
+                    pass  # TODO
 
             self.gfx.draw(current_node)
 

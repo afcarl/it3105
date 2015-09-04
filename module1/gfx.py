@@ -13,6 +13,7 @@ class Gfx(object):
     BLUE = 109, 142, 224  # start
     PINK = 255, 130, 234  # current node
     DARK_PINK = 178, 110, 149  # nodes backtracked from current node
+    FPS = 2.0
 
     def __init__(self, board):
         self.board = board
@@ -21,6 +22,8 @@ class Gfx(object):
         self.GU_Y = self.height / float(board.rect.height)
 
         self.screen = pygame.display.set_mode(self.size)
+
+        self.clock = pygame.time.Clock()
 
     def flip_vertically(self, y):
         """
@@ -60,6 +63,8 @@ class Gfx(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+        self.clock.tick(self.FPS)
 
         self.screen.fill(self.WHITE)
 

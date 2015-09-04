@@ -2,7 +2,7 @@ from two_dee import Point
 
 
 class Node(Point):
-    def __init__(self, board, position, g, h=None, parent=None):
+    def __init__(self, board, position, g=None, h=None, parent=None):
         super(Node, self).__init__(position.x, position.y)
         self.board = board
         self.position = position
@@ -33,7 +33,7 @@ class Node(Point):
         }
         for position in candidate_positions:
             if self.board.is_tile_accessible(position):
-                child = Node(self.board, position, self.g + 1, None, self)
+                child = Node(self.board, position, None, None, self)
                 children.add(child)
         return children
 
@@ -55,3 +55,7 @@ class Node(Point):
 
     def __hash__(self):
         return hash(self.as_tuple())
+
+    @staticmethod
+    def get_arc_cost():
+        return 1
