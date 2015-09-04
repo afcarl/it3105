@@ -59,6 +59,5 @@ class Node(Point):
     def __hash__(self):
         return hash(self.as_tuple())
 
-    @staticmethod
-    def get_arc_cost(other_node):
+    def get_arc_cost(self, other_node):
         return Node.ARC_COST_MULTIPLIER

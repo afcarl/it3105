@@ -73,6 +73,12 @@ class Main:
         start_node.calculate_f()
         open_list.add(start_node, start_node.f)
 
+        def attach_and_eval(current_node, child):
+            child.set_g(current_node.g + current_node.get_arc_cost(child))
+            child.calculate_h()
+            child.calculate_f()
+            child.set_parent(current_node)
+
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
@@ -85,10 +91,12 @@ class Main:
                 print "number of iterations:", num_iterations
                 ancestors = current_node.get_ancestors()
                 print "path length:", len(ancestors)
+                """
                 print "backtracked path:"
                 print current_node
                 for ancestor in ancestors:
                     print ancestor
+                """
                 return current_node
             children = current_node.get_children()
             for child in children:
@@ -101,13 +109,10 @@ class Main:
                     previously_generated = True
 
                 if not previously_generated:
-                    child.set_g(current_node.g + current_node.get_arc_cost(child))
-                    child.calculate_h()
-                    child.calculate_f()
-                    child.set_parent(current_node)
+                    attach_and_eval(current_node, child)
                     open_list.add(child, child.f)
-                elif False and True:  # TODO
-                    pass  # TODO
+                elif current_node.g + current_node.get_arc_cost(child) < child.g:
+                    attach_and_eval(current_node, child)
 
         print 'Failed to find a solution within the max number of iterations,', max_num_iterations
         return False
