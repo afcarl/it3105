@@ -1,5 +1,4 @@
 import sys, pygame
-from two_dee import Point
 
 pygame.init()
 
@@ -69,5 +68,7 @@ class Gfx(object):
         self.draw_current_node(current_node)
         self.draw_ancestors(current_node.get_ancestors())
         self.draw_start()
+
+        # TODO: draw open list and closed list? dunno if necessary
 
         pygame.display.flip()

@@ -39,12 +39,14 @@ class Main:
         return dimensions, start, goal, barriers
 
     def run(self):
+        # TODO: use heapq and set for open and closed list
+
         open_list = []
         closed_list = []
         start_node = Node(self.board, position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
-        open_list.append(start_node)
+        open_list.append(start_node.as_tuple())
 
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
@@ -56,9 +58,13 @@ class Main:
                 return current_node
             children = current_node.get_children()
             for child in children:
-                print child
+                child_as_tuple = child.as_tuple()
+                if child_as_tuple in open_list:
+                    child = open_list[child_as_tuple]
+                elif child_as_tuple in closed_list:
+                    child = closed_list[child_as_tuple]
+
                 # if exist in closed or open list, use the existing node
-                pass
 
             self.gfx.draw(current_node)
 
