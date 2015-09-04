@@ -21,7 +21,7 @@ class Node(Point):
         self.f = self.g + self.h
 
     def calculate_h(self):
-        self.h = self.position.euclidean_distance_to(self.board.goal)
+        self.h = self.position.manhattan_distance_to(self.board.goal)
 
     def get_children(self):
         children = set()

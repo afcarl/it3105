@@ -44,7 +44,7 @@ class Main:
         start_node = Node(self.board, position=self.board.start, g=0)
         start_node.calculate_h()
         start_node.calculate_f()
-        open_list.add(start_node, start_node.h)
+        open_list.add(start_node, start_node.f)
 
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
