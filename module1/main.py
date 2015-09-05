@@ -35,6 +35,13 @@ class Main:
             default=16.0
         )
         arg_parser.add_argument(
+            '--draw-every',
+            dest='draw_every',
+            type=int,
+            required=False,
+            default=1
+        )
+        arg_parser.add_argument(
             '--disable-gfx',
             nargs='?',
             dest='disable_gfx',
@@ -57,6 +64,7 @@ class Main:
         f.close()
 
         self.disable_gfx = args.disable_gfx
+        self.draw_every = args.draw_every
 
         dimensions, start, goal, barriers = self.parse_lines(lines)
         self.board = Board(dimensions, start, goal, barriers)
@@ -104,7 +112,7 @@ class Main:
                 return False
             current_node = open_list.pop()
             closed_list[current_node] = current_node
-            if not self.disable_gfx:
+            if not self.disable_gfx and num_iterations % self.draw_every == 0:
                 self.gfx.draw(current_node, closed_list, open_list)
             if current_node.is_solution():
                 print "number of iterations:", num_iterations
