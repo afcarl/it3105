@@ -13,9 +13,8 @@ class Gfx(object):
     BLUE = 109, 142, 224  # start
     PINK = 255, 130, 234  # current node
     DARK_PINK = 178, 110, 149  # nodes backtracked from current node
-    FPS = 16.0
 
-    def __init__(self, board):
+    def __init__(self, board, fps):
         self.board = board
 
         self.GU_X = self.width / float(board.rect.width)
@@ -24,6 +23,7 @@ class Gfx(object):
         self.screen = pygame.display.set_mode(self.size)
 
         self.clock = pygame.time.Clock()
+        self.fps = fps
 
     def flip_vertically(self, y):
         """
@@ -73,13 +73,13 @@ class Gfx(object):
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    self.FPS /= 2
+                    self.fps /= 2
                 if event.key == pygame.K_UP:
-                    self.FPS *= 2
-                    if self.FPS > 256.0:
-                        self.FPS = 256.0
+                    self.fps *= 2
+                    if self.fps > 256.0:
+                        self.fps = 256.0
 
-        self.clock.tick(self.FPS)
+        self.clock.tick(self.fps)
 
         self.screen.fill(self.WHITE)
 

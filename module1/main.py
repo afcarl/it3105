@@ -13,7 +13,6 @@ class Main:
     def __init__(self):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument(
-            '-i',
             '--input',
             dest='filename',
             type=str,
@@ -21,13 +20,27 @@ class Main:
             required=True
         )
         arg_parser.add_argument(
-            '-m',
             '--mode',
             dest='mode',
             type=str,
             choices=['astar', 'bfs', 'dfs'],
             required=False,
             default="astar"
+        )
+        arg_parser.add_argument(
+            '--fps',
+            dest='fps',
+            type=float,
+            required=False,
+            default=16.0
+        )
+        arg_parser.add_argument(
+            '--disable-gfx',
+            nargs='?',
+            dest='disable_gfx',
+            const=True,
+            required=False,
+            default=False
         )
         args = arg_parser.parse_args()
 
@@ -43,11 +56,14 @@ class Main:
             lines.append(line.strip())
         f.close()
 
+        self.disable_gfx = args.disable_gfx
+
         dimensions, start, goal, barriers = self.parse_lines(lines)
         self.board = Board(dimensions, start, goal, barriers)
         Node.board = self.board
 
-        self.gfx = Gfx(self.board)
+        if not self.disable_gfx:
+            self.gfx = Gfx(board=self.board, fps=args.fps)
 
         self.run()
 
@@ -88,7 +104,8 @@ class Main:
                 return False
             current_node = open_list.pop()
             closed_list[current_node] = current_node
-            self.gfx.draw(current_node, closed_list, open_list)
+            if not self.disable_gfx:
+                self.gfx.draw(current_node, closed_list, open_list)
             if current_node.is_solution():
                 print "number of iterations:", num_iterations
                 ancestors = current_node.get_ancestors()
