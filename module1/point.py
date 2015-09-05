@@ -1,6 +1,9 @@
 import math
 
 class Point(object):
+    """
+    This class holds a position in a 2D world and helps doing some math
+    """
     def __init__(self, x, y):
         self.x = x
         self.y = y

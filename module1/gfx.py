@@ -4,6 +4,9 @@ pygame.init()
 
 
 class Gfx(object):
+    """
+    This class takes care of drawing the state of the search to a window using pygame
+    """
     size = width, height = 960, 540
     WHITE = 255, 255, 255  # undiscovered tiles
     BLACK = 0, 0, 0  # closed tiles

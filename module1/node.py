@@ -1,7 +1,11 @@
 from point import Point
 
 class Node(Point):
-    H_MULTIPLIER = 1
+    """
+    This class represents the state of a node along with its score (f, g, h) and expand function
+    This is the class that should be replaced or subclassed to implement other A* problems
+    """
+    H_MULTIPLIER = 0.9999  # we should underestimate in order to find the shortest path
     ARC_COST_MULTIPLIER = 1
     board = None
 
@@ -35,7 +39,7 @@ class Node(Point):
         }
         for position in candidate_positions:
             if self.board.is_tile_accessible(position):
-                child = Node(position, None, None, self)
+                child = Node(position)
                 children.add(child)
         return children
 

@@ -1,11 +1,8 @@
 class Board:
-    TILE_STATES = {
-        "NOT_ACCESSIBLE": -1,
-        "UNEXPLORED": 0,
-        "OPEN": 1,
-        "CLOSED": 2,
-        "ACTIVE": 3
-    }
+    """
+    This class holds information about the board, i.e. the size and the
+    location of start, goal and barriers
+    """
 
     def __init__(self, dimensions, start, goal, barriers):
         self.tiles = []

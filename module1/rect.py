@@ -1,4 +1,7 @@
 class Rect:
+    """
+    This class represents a rectangle. Useful for barriers.
+    """
     def __init__(self, x, y, width, height):
         if width < 0 or height < 0:
             raise Exception('negative width or height is not allowed')

@@ -1,6 +1,10 @@
 import heapq
 
 class NodePrioritySet(object):
+    """
+    This class combines a heap (swift insertion time for new nodes while maintaining order)
+    and a dictionary (quick lookup)
+    """
     def __init__(self):
         self.counter = 0  # used to ensure LIFO behavior for nodes with equal priority
         self.heap = []

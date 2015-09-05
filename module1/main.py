@@ -11,6 +11,10 @@ import argparse
 
 class Main:
     def __init__(self):
+        """
+        Parse command line arguments, read input file, set up board and call run()
+        """
+
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument(
             '--input',
@@ -77,6 +81,10 @@ class Main:
 
     @staticmethod
     def parse_lines(lines):
+        """
+        Parse the lines of the input file according to the spec
+        :param lines: array
+        """
         dimensions_tuple = literal_eval(lines[0])
         dimensions = Rect(0, 0, dimensions_tuple[0], dimensions_tuple[1])
         start_tuple = literal_eval(lines[1].split(' ')[0])
@@ -92,6 +100,9 @@ class Main:
         return dimensions, start, goal, barriers
 
     def run(self):
+        """
+        Run the A* algorithm
+        """
         open_list = NodePrioritySet()
         closed_list = {}
         start_node = Node(position=self.board.start, g=0)
