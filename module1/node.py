@@ -5,7 +5,7 @@ class Node(Point):
     This class represents the state of a node along with its score (f, g, h) and expand function
     This is the class that should be replaced or subclassed to implement other A* problems
     """
-    H_MULTIPLIER = 0.9999  # we should underestimate in order to find the shortest path
+    H_MULTIPLIER = 1
     ARC_COST_MULTIPLIER = 1
     board = None
 
@@ -27,7 +27,7 @@ class Node(Point):
         self.f = self.g + self.h
 
     def calculate_h(self):
-        self.h = self.position.manhattan_distance_to(self.board.goal) * Node.H_MULTIPLIER
+        self.h = self.position.euclidean_distance_to(self.board.goal) * Node.H_MULTIPLIER
 
     def get_children(self):
         children = set()

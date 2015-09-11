@@ -7,6 +7,7 @@ from board import Board
 from gfx import Gfx
 from priority_set import NodePrioritySet
 import argparse
+import time
 
 
 class Main:
@@ -17,6 +18,7 @@ class Main:
 
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument(
+            '-i',
             '--input',
             dest='filename',
             type=str,
@@ -41,6 +43,7 @@ class Main:
         arg_parser.add_argument(
             '--draw-every',
             dest='draw_every',
+            help='Use this argument to skip frames when visualizing large and complex problems',
             type=int,
             required=False,
             default=1
@@ -49,6 +52,25 @@ class Main:
             '--disable-gfx',
             nargs='?',
             dest='disable_gfx',
+            const=True,
+            required=False,
+            default=False
+        )
+        arg_parser.add_argument(
+            '--print-path',
+            nargs='?',
+            dest='print_path',
+            help='If a solution is found, print the backtracked nodes that led to the solution',
+            const=True,
+            required=False,
+            default=False
+        )
+        arg_parser.add_argument(
+            '--print-execution-time',
+            nargs='?',
+            dest='print_execution_time',
+            help='At the end of the run, print the execution time of the A* algorithm. Useful for'
+                 ' testing the performance of the algorithm while gfx is disabled.',
             const=True,
             required=False,
             default=False
@@ -68,6 +90,8 @@ class Main:
         f.close()
 
         self.disable_gfx = args.disable_gfx
+        self.print_path = args.print_path
+        self.print_execution_time = args.print_execution_time
         self.draw_every = args.draw_every
 
         dimensions, start, goal, barriers = self.parse_lines(lines)
@@ -77,7 +101,11 @@ class Main:
         if not self.disable_gfx:
             self.gfx = Gfx(board=self.board, fps=args.fps)
 
+        if self.print_execution_time:
+            self.start_time = time.time()
         self.run()
+        if self.print_execution_time:
+            print "execution time: %s seconds" % (time.time() - self.start_time)
 
     @staticmethod
     def parse_lines(lines):
@@ -116,6 +144,8 @@ class Main:
             child_node.calculate_f()
             child_node.set_parent(parent_node)
 
+        # If the algorithm still hasn't found a solution after the max number of iterations,
+        # then the algorithm will stop
         max_num_iterations = 50000000
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
@@ -124,17 +154,16 @@ class Main:
             current_node = open_list.pop()
             closed_list[current_node] = current_node
             if not self.disable_gfx and num_iterations % self.draw_every == 0:
-                self.gfx.draw(current_node, closed_list, open_list)
+                self.gfx.draw(current_node, closed_list, open_list)  # draw the current state
             if current_node.is_solution():
-                print "number of iterations:", num_iterations
+                print "number of nodes created:", len(closed_list) + len(open_list.dict)
                 ancestors = current_node.get_ancestors()
                 print "path length:", len(ancestors)
-                """
-                print "backtracked path:"
-                print current_node
-                for ancestor in ancestors:
-                    print ancestor
-                """
+                if self.print_path:
+                    print "backtracked nodes that led to the solution:"
+                    print current_node
+                    for ancestor in ancestors:
+                        print ancestor
                 return current_node
             children = current_node.get_children()
             for child in children:

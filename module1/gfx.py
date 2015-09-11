@@ -25,7 +25,7 @@ class Gfx(object):
 
         self.screen = pygame.display.set_mode(self.size)
 
-        self.clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()  # used for limiting the fps, so one can see each step
         self.fps = fps
 
     def flip_vertically(self, y):
@@ -76,9 +76,9 @@ class Gfx(object):
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    self.fps /= 2
+                    self.fps /= 2  # halve the fps
                 if event.key == pygame.K_UP:
-                    self.fps *= 2
+                    self.fps *= 2  # double the fps
                     if self.fps > 256.0:
                         self.fps = 256.0
 
