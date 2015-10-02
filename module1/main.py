@@ -154,7 +154,8 @@ class Main:
             current_node = open_list.pop()
             closed_list[current_node] = current_node
             if not self.disable_gfx and num_iterations % self.draw_every == 0:
-                self.gfx.draw(current_node, closed_list, open_list)  # draw the current state
+                ancestors = current_node.get_ancestors()
+                self.gfx.draw(current_node, ancestors, closed_list, open_list)  # draw current state
             if current_node.is_solution():
                 print "number of nodes created:", len(closed_list) + len(open_list.dict)
                 ancestors = current_node.get_ancestors()

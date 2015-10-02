@@ -1,5 +1,6 @@
 import heapq
 
+
 class NodePrioritySet(object):
     """
     This class combines a heap (swift insertion time for new nodes while maintaining order)

@@ -70,7 +70,7 @@ class Gfx(object):
         for ancestor in ancestors:
             self.draw_tile(ancestor.x, ancestor.y, self.DARK_PINK)
 
-    def draw(self, current_node, closed_list, open_list):
+    def draw(self, current_node, ancestors, closed_list, open_list):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -91,7 +91,7 @@ class Gfx(object):
         self.draw_open_list(open_list)
         self.draw_goal()
         self.draw_current_node(current_node)
-        self.draw_ancestors(current_node.get_ancestors())
+        self.draw_ancestors(ancestors)
         self.draw_start()
 
         pygame.display.flip()
