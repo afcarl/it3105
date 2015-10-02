@@ -26,7 +26,11 @@ class TestCspNode(unittest.TestCase):
             domains=initial_domains
         )
 
-        csp_node = CspNode(domains=initial_domains, constraints=constraint_network.constraints)
+        csp_node = CspNode(
+            domains=initial_domains,
+            constraints=constraint_network.constraints,
+            constraint_network=constraint_network
+        )
         csp_node.initialize_csp()
         csp_node.domain_filtering()
 

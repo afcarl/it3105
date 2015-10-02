@@ -1,4 +1,4 @@
-#from module1.node import Node
+# from module1.node import Node
 import itertools
 from collections import deque
 
@@ -9,19 +9,22 @@ class TodoRevise:
         self.constraint = constraint
 
     def __repr__(self):
-        return "focal variable: " + str(self.focal_variable)\
+        return "focal variable: " + str(self.focal_variable) \
                + ", constraint: " + self.constraint.expression
 
 
-class CspNode:#(Node):
+class CspNode:  # (Node):
     """
     domains: dict
     constraints: list of constraints
+    constraint_network: ConstraintNetwork instance
     """
-    def __init__(self, domains, constraints):
+
+    def __init__(self, domains, constraints, constraint_network):
         self.domains = domains
         self.constraints = constraints
-        self.queue = deque()  # todo: improve data structure
+        self.queue = deque()
+        self.constraint_network = constraint_network  # TODO: this should be static
 
     def initialize_csp(self):
         for constraint in self.constraints.itervalues():
@@ -34,10 +37,25 @@ class CspNode:#(Node):
             print 'processing agenda item', todo_revise
             domain_was_reduced = self.revise(todo_revise.focal_variable, todo_revise.constraint)
             if domain_was_reduced:
-                # TODO: find affected pairs, and push them
-                #self.queue.append(new_todo_revise)
+                todo_constraints = self.constraint_network.get_constraints_by_variable(
+                    variable=todo_revise.focal_variable,
+                    current_constraint=todo_revise.constraint
+                )
+                for constraint in todo_constraints:
+                    for variable in constraint.variables:
+                        #if variable == todo_revise.focal_variable:
+                        #    continue  # TODO: not sure if I should include this
+                        self.queue.append(
+                            TodoRevise(
+                                focal_variable=variable,
+                                constraint=constraint
+                            )
+                        )
+
                 print 'domain was reduced'
-                pass
+            else:
+                print 'domain was not reduced'
+        print 'domain filtering is done!'
 
     def has_possible_combinations(self, focal_variable, value, constraint):
         domains_as_list_of_lists = []
