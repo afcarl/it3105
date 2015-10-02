@@ -1,5 +1,6 @@
 #from module1.node import Node
 import itertools
+from collections import deque
 
 
 class TodoRevise:
@@ -20,7 +21,7 @@ class CspNode:#(Node):
     def __init__(self, domains, constraints):
         self.domains = domains
         self.constraints = constraints
-        self.queue = []  # todo: improve data structure
+        self.queue = deque()  # todo: improve data structure
 
     def initialize_csp(self):
         for constraint in self.constraints.itervalues():
@@ -29,7 +30,7 @@ class CspNode:#(Node):
 
     def domain_filtering(self):
         while self.queue:
-            todo_revise = self.queue.pop(0)
+            todo_revise = self.queue.popleft()
             print 'processing agenda item', todo_revise
             domain_was_reduced = self.revise(todo_revise.focal_variable, todo_revise.constraint)
             if domain_was_reduced:
@@ -39,19 +40,16 @@ class CspNode:#(Node):
                 pass
 
     def has_possible_combinations(self, focal_variable, value, constraint):
-        list_of_lists = []
+        domains_as_list_of_lists = []
         for variable in constraint.ordered_variables:
             if variable == focal_variable:
-                list_of_lists.append([value])
+                domains_as_list_of_lists.append([value])
             else:
-                domain_list = list(self.domains[variable])
-                list_of_lists.append(domain_list)
-        combinations = list(itertools.product(*list_of_lists))  # TODO: fix
+                domains_as_list_of_lists.append(self.domains[variable])
+        combinations = list(itertools.product(*domains_as_list_of_lists))
         for combination in combinations:
-            is_satisfied = constraint.is_satisfied(*combination)
-            if is_satisfied:
+            if constraint.is_satisfied(*combination):
                 return True
-
         return False
 
     def revise(self, focal_variable, constraint):
