@@ -1,37 +1,55 @@
 class Constraint:
-    def __init__(self, name, variables, function):
+    """
+    name: string
+    variables: list
+    expression: string
+    """
+    def __init__(self, name, variables, expression):
         self.name = name
-        self.variables = variables
-        self.function = function
+        self.ordered_variables = variables
+        self.variables = set(variables)
+        self.function = self.make_function(variables, expression)
+        self.expression = expression
 
-    def is_satisfied(self, values):
-        return self.function(*values)  # TODO: test/fix this
+    def __repr__(self):
+        return self.expression
+
+    """
+    values: dict(variable: value)
+    """
+    def is_satisfied(self, *values, **value_map):
+        return self.function(*values, **value_map)
 
     def has_input_variable(self, variable):
         return variable in self.variables
 
+    """
+    TODO: this function may be obsolete
+    """
     def get_variables_except_focal_variable(self, focal_variable):
-        other_variables = set(self.variables)
-        other_variables.remove(focal_variable)
+
+        other_variables = []
+        for variable in self.ordered_variables:
+            if variable != focal_variable:
+                other_variables.append(variable)
         return other_variables
+
+    @staticmethod
+    def make_function(variables, expression, environment=globals()):
+        # http://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
+        # TODO: make this less dangerous by checking the expression before creating the function
+        return eval("(lambda " + ', '.join(variables) + ": " + expression + ")", environment)
 
 
 class ConstraintNetwork:
-    def __init__(self):
-        self.constraints = {
-            "c1": lambda x, y, z: x > y,
-            "c2": lambda x, y, z: x + y > z
-        }  #TODO: use the Constraint class instead
-        self.domains = {
-            "x": {0, 1, 2, 3},
-            "y": {0, 1, 2, 3, 4, 5},
-            "z": {4, 5, 6, 7}
-        }  # This is test data. TODO: replace with something better
+    def __init__(self, constraints, domains):
+        self.constraints = constraints
+        self.domains = domains
 
     def get_constraints_by_variable_except_current_constraint(self, variable, current_constraint):
         constraints = set()
-        constraints.remove(current_constraint)
-        for constraint in self.constraints:
-            if constraint.has_input_variable(variable):
+        for constraint_name in self.constraints:
+            constraint = self.constraints[constraint_name]
+            if constraint != current_constraint and constraint.has_input_variable(variable):
                 constraints.add(constraint)
         return constraints
