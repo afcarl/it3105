@@ -8,14 +8,14 @@ from node import Node
 class TestNode(unittest.TestCase):
     def test_node_extends_point(self):
         dimensions = Rect(0, 0, 12, 12)
-        start = Point(3, 4)
-        goal = Point(8, 11)
+        start = Point(x=3, y=4)
+        goal = Point(x=8, y=11)
         barriers = []
         Node.board = Board(dimensions, start, goal, barriers)
 
-        position1 = Point(8, 9)
+        position1 = Point(x=8, y=9)
         node1 = Node(position1, 0)
-        position2 = Point(8, 10)
+        position2 = Point(x=8, y=10)
         node2 = Node(position2, 1, None, node1)
         node3 = Node(position1, 2, None, node2)
 
@@ -25,7 +25,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(node1.equals(node3))
 
         # test as_tuple()
-        self.assertEquals(node1.as_tuple(), (8, 9))
+        self.assertEquals(node1.position.as_tuple(), (8, 9))
 
         # test is_solution()
         goal_node = Node(goal, 3, None, node3)

@@ -1,5 +1,6 @@
 import math
 
+
 class Point(object):
     """
     This class holds a position in a 2D world and helps doing some math

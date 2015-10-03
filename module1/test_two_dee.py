@@ -5,7 +5,7 @@ from point import Point
 
 class TestTwoDee(unittest.TestCase):
     def test_construct_point(self):
-        point2 = Point(8, 9)
+        point2 = Point(x=8, y=9)
         self.assertEqual(point2.x, 8)
         self.assertEqual(point2.y, 9)
 
@@ -22,11 +22,11 @@ class TestTwoDee(unittest.TestCase):
 
     def test_point_inside(self):
         rect = Rect(2, 2, 5, 5)
-        point1 = Point(1, 1)
-        point2 = Point(8, 8)
-        point3 = Point(4, 8)
-        point4 = Point(8, 4)
-        point5 = Point(3, 3)
+        point1 = Point(x=1, y=1)
+        point2 = Point(x=8, y=8)
+        point3 = Point(x=4, y=8)
+        point4 = Point(x=8, y=4)
+        point5 = Point(x=3, y=3)
         self.assertFalse(point1.is_inside(rect))
         self.assertFalse(point2.is_inside(rect))
         self.assertFalse(point3.is_inside(rect))

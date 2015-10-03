@@ -116,9 +116,9 @@ class Main:
         dimensions_tuple = literal_eval(lines[0])
         dimensions = Rect(0, 0, dimensions_tuple[0], dimensions_tuple[1])
         start_tuple = literal_eval(lines[1].split(' ')[0])
-        start = Point(*start_tuple)
+        start = Point(x=start_tuple[0], y=start_tuple[1])
         goal_tuple = literal_eval(lines[1].split(' ')[1])
-        goal = Point(*goal_tuple)
+        goal = Point(x=goal_tuple[0], y=goal_tuple[1])
         barrier_tuples = lines[2:]
         barriers = []
         for barrier_tuple in barrier_tuples:

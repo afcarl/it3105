@@ -1,30 +1,17 @@
 from point import Point
+from base_node import BaseNode
 
-class Node(Point):
+
+class Node(BaseNode):
     """
-    This class represents the state of a node along with its score (f, g, h) and expand function
-    This is the class that should be replaced or subclassed to implement other A* problems
+    This is a Node implementation that is specific to the "find shortest path" problem
     """
     H_MULTIPLIER = 1
-    ARC_COST_MULTIPLIER = 1
     board = None
 
     def __init__(self, position, g=None, h=None, parent=None):
-        super(Node, self).__init__(position.x, position.y)
+        super(Node, self).__init__(g=g, h=h, parent=parent)
         self.position = position
-        self.parent = parent
-        self.g = g
-        self.h = h
-        self.f = None
-
-    def set_parent(self, parent):
-        self.parent = parent
-
-    def set_g(self, g):
-        self.g = g
-
-    def calculate_f(self):
-        self.f = self.g + self.h
 
     def calculate_h(self):
         self.h = self.position.euclidean_distance_to(self.board.goal) * Node.H_MULTIPLIER
@@ -32,10 +19,10 @@ class Node(Point):
     def get_children(self):
         children = set()
         candidate_positions = {
-            Point(self.position.x, self.position.y + 1),
-            Point(self.position.x, self.position.y - 1),
-            Point(self.position.x + 1, self.position.y),
-            Point(self.position.x - 1, self.position.y)
+            Point(x=self.position.x, y=self.position.y + 1),
+            Point(x=self.position.x, y=self.position.y - 1),
+            Point(x=self.position.x + 1, y=self.position.y),
+            Point(x=self.position.x - 1, y=self.position.y)
         }
         for position in candidate_positions:
             if self.board.is_tile_accessible(position):
@@ -44,7 +31,7 @@ class Node(Point):
         return children
 
     def is_solution(self):
-        return self.equals(self.board.goal)
+        return self.position.x == self.board.goal.x and self.position.y == self.board.goal.y
 
     def get_ancestors(self):
         ancestors = []
@@ -57,10 +44,17 @@ class Node(Point):
                 current_node = current_node.parent
 
     def __eq__(self, other_node):
-        return self.as_tuple() == other_node.as_tuple()
+        return self.position.as_tuple() == other_node.position.as_tuple()
 
     def __hash__(self):
-        return hash(self.as_tuple())
+        return hash(self.position.as_tuple())
 
     def get_arc_cost(self, other_node):
         return Node.ARC_COST_MULTIPLIER
+
+    def equals(self, other_node):
+        return self.position.x == other_node.position.x and self.position.y == other_node.position.y
+
+    def __str__(self):
+        return "x:" + str(self.position.x) + \
+               " y:" + str(self.position.y)

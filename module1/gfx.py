@@ -51,11 +51,11 @@ class Gfx(object):
 
     def draw_closed_list(self, closed_list):
         for tile in closed_list:
-            self.draw_tile(tile.x, tile.y, self.BLACK)
+            self.draw_tile(tile.position.x, tile.position.y, self.BLACK)
 
     def draw_open_list(self, open_list):
         for tile in open_list:
-            self.draw_tile(tile.x, tile.y, self.YELLOW)
+            self.draw_tile(tile.position.x, tile.position.y, self.YELLOW)
 
     def draw_start(self):
         self.draw_tile(self.board.start.x, self.board.start.y, self.BLUE)
@@ -64,11 +64,11 @@ class Gfx(object):
         self.draw_tile(self.board.goal.x, self.board.goal.y, self.GREEN)
 
     def draw_current_node(self, node):
-        self.draw_tile(node.x, node.y, self.PINK)
+        self.draw_tile(node.position.x, node.position.y, self.PINK)
 
     def draw_ancestors(self, ancestors):
         for ancestor in ancestors:
-            self.draw_tile(ancestor.x, ancestor.y, self.DARK_PINK)
+            self.draw_tile(ancestor.position.x, ancestor.position.y, self.DARK_PINK)
 
     def draw(self, current_node, ancestors, closed_list, open_list):
         for event in pygame.event.get():
