@@ -13,6 +13,13 @@ class TodoRevise:
                + ", constraint: " + self.constraint.expression
 
 
+class Vertex(object):
+    def __init__(self, i, x, y):
+        self.i = i
+        self.x = x
+        self.y = y
+
+
 class CspNode(BaseNode):
     """
     domains: dict
@@ -20,7 +27,8 @@ class CspNode(BaseNode):
     constraint_network: ConstraintNetwork instance
     """
 
-    def __init__(self, domains, constraints, constraint_network):
+    def __init__(self, position, domains, constraints, constraint_network):
+        self.position = position
         self.domains = domains
         self.constraints = constraints
         self.queue = deque()

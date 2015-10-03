@@ -1,4 +1,4 @@
-class Constraint:
+class Constraint(object):
     """
     name: string
     variables: list
@@ -41,7 +41,20 @@ class Constraint:
         return eval("(lambda " + ', '.join(variables) + ": " + expression + ")", environment)
 
 
-class ConstraintNetwork:
+class Variable(object):
+    def __init__(self, name, domain):
+        self.name = name
+        self.domain = domain
+
+
+class VertexColorVariable(Variable):
+    def __init__(self, domain, i, x, y):
+        super(VertexColorVariable, self).__init__(name=i, domain=domain)
+        self.x = x
+        self.y = y
+
+
+class ConstraintNetwork(object):
     def __init__(self, constraints, domains):
         self.constraints = constraints
         self.domains = domains
@@ -59,3 +72,9 @@ class ConstraintNetwork:
             if constraint != current_constraint and constraint.has_input_variable(variable):
                 constraints.add(constraint)
         return constraints
+
+
+class VertexColorConstraintNetwork(ConstraintNetwork):
+    def __init__(self, vertices, edges):
+        # TODO
+        pass

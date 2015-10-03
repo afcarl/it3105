@@ -27,7 +27,15 @@ class Gfx(object):
         self.clock = pygame.time.Clock()  # used for limiting the fps, so one can see each step
         self.fps = fps
 
-    def draw(self, current_node, ancestors, closed_list, open_list):
+    def draw_dots(self, nodes):
+        for node in nodes:
+            pygame.draw.circle(self.screen, node.get_color(), [60, 250], 40)
+
+    def draw_arcs(self, arcs):
+        for arc in arcs:
+            pass  # TODO: draw arcs
+
+    def draw(self, current_node):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -43,6 +51,7 @@ class Gfx(object):
 
         self.screen.fill(self.WHITE)
 
-        # TODO: draw stuff
+        self.draw_dots(current_node.get_dots())
+        self.draw_arcs(current_node.get_arcs())
 
         pygame.display.flip()

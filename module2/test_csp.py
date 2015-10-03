@@ -1,6 +1,7 @@
 import unittest
 from constraint_network import Constraint, ConstraintNetwork
 from node import CspNode
+from module1.point import Point
 
 
 class TestCspNode(unittest.TestCase):
@@ -27,6 +28,7 @@ class TestCspNode(unittest.TestCase):
         )
 
         csp_node = CspNode(
+            position=Point(0.1, 0.1),
             domains=initial_domains,
             constraints=constraint_network.constraints,
             constraint_network=constraint_network
