@@ -5,9 +5,9 @@ from point import Point
 from node import Node
 from board import Board
 from gfx import Gfx
-from priority_set import NodePrioritySet
 import argparse
 import time
+from a_star import AStar
 
 
 class Main:
@@ -128,63 +128,16 @@ class Main:
         return dimensions, start, goal, barriers
 
     def run(self):
-        """
-        Run the A* algorithm
-        """
-        open_list = NodePrioritySet()
-        closed_list = {}
         start_node = Node(position=self.board.start, g=0)
-        start_node.calculate_h()
-        start_node.calculate_f()
-        open_list.add(start_node, start_node.f)
 
-        def attach_and_eval(parent_node, child_node):
-            child_node.set_g(parent_node.g + parent_node.get_arc_cost(child_node))
-            child_node.calculate_h()
-            child_node.calculate_f()
-            child_node.set_parent(parent_node)
+        a_star = AStar(
+            draw=self.gfx.draw,
+            disable_gfx=self.disable_gfx,
+            draw_every=self.draw_every,
+            print_path=self.print_path
+        )
 
-        # If the algorithm still hasn't found a solution after the max number of iterations,
-        # then the algorithm will stop
-        max_num_iterations = 50000000
-        for num_iterations in range(max_num_iterations):
-            if open_list.is_empty():
-                print 'Failed to find a solution'
-                return False
-            current_node = open_list.pop()
-            closed_list[current_node] = current_node
-            if not self.disable_gfx and num_iterations % self.draw_every == 0:
-                ancestors = current_node.get_ancestors()
-                self.gfx.draw(current_node, ancestors, closed_list, open_list)  # draw current state
-            if current_node.is_solution():
-                print "number of nodes created:", len(closed_list) + len(open_list.dict)
-                ancestors = current_node.get_ancestors()
-                print "path length:", len(ancestors)
-                if self.print_path:
-                    print "backtracked nodes that led to the solution:"
-                    print current_node
-                    for ancestor in ancestors:
-                        print ancestor
-                return current_node
-            children = current_node.get_children()
-            for child in children:
-                previously_generated = False
-                if child in open_list:
-                    child = open_list[child]  # re-use previously generated node
-                    previously_generated = True
-                elif child in closed_list:
-                    child = closed_list[child]  # re-use previously generated node
-                    previously_generated = True
-
-                if not previously_generated:
-                    attach_and_eval(current_node, child)
-                    open_list.add(child, child.f)
-                elif current_node.g + current_node.get_arc_cost(child) < child.g:
-                    attach_and_eval(current_node, child)
-
-        print 'Failed to find a solution within the max number of iterations,', max_num_iterations
-        return False
-
+        a_star.run(start_node=start_node)
 
 if __name__ == '__main__':
     Main()
