@@ -1,4 +1,4 @@
-from module1.node import Node
+from module1.node import BaseNode
 import itertools
 from collections import deque
 
@@ -13,7 +13,7 @@ class TodoRevise:
                + ", constraint: " + self.constraint.expression
 
 
-class CspNode(Node):
+class CspNode(BaseNode):
     """
     domains: dict
     constraints: list of constraints
@@ -25,6 +25,7 @@ class CspNode(Node):
         self.constraints = constraints
         self.queue = deque()
         self.constraint_network = constraint_network  # TODO: this should be static
+        super(CspNode, self).__init__()
 
     def initialize_csp(self):
         for constraint in self.constraints.itervalues():

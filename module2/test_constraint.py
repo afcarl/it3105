@@ -92,7 +92,7 @@ class TestConstraintNetwork(unittest.TestCase):
         )
 
         self.assertEquals(
-            constraint_network.get_constraints_by_variable_except_current_constraint(
+            constraint_network.get_constraints_by_variable(
                 'x',
                 constraint_network.constraints['c1']
             ),
