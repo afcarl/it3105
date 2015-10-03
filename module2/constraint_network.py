@@ -46,7 +46,7 @@ class ConstraintNetwork:
         self.constraints = constraints
         self.domains = domains
 
-    def get_constraints_by_variable(self, variable, current_constraint):
+    def get_constraints_by_variable(self, variable, current_constraint=None):
         """
         current_constraint is excluded from the result
         :param variable:

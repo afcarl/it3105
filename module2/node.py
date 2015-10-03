@@ -1,4 +1,4 @@
-# from module1.node import Node
+from module1.node import Node
 import itertools
 from collections import deque
 
@@ -13,7 +13,7 @@ class TodoRevise:
                + ", constraint: " + self.constraint.expression
 
 
-class CspNode:  # (Node):
+class CspNode(Node):
     """
     domains: dict
     constraints: list of constraints
@@ -90,3 +90,18 @@ class CspNode:  # (Node):
         self.domains[focal_variable] -= values_to_remove
 
         return has_reduced_domain
+
+    def rerun(self, assumed_variable):  # TODO: actually use this function
+        todo_constraints = self.constraint_network.get_constraints_by_variable(
+            variable=assumed_variable
+        )
+        for constraint in todo_constraints:
+            for variable in constraint.variables:
+                #if variable == todo_revise.focal_variable:
+                #    continue  # TODO: not sure if I should include this
+                self.queue.append(
+                    TodoRevise(
+                        focal_variable=variable,
+                        constraint=constraint
+                    )
+                )
