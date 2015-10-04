@@ -131,7 +131,7 @@ class Main:
         start_node = Node(position=self.board.start, g=0)
 
         a_star = AStar(
-            draw=self.gfx.draw,
+            draw=self.gfx.draw if not self.disable_gfx else lambda _: 0,
             disable_gfx=self.disable_gfx,
             draw_every=self.draw_every,
             print_path=self.print_path
