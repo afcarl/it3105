@@ -44,18 +44,18 @@ class Gfx(object):
 
     def draw_vertices(self, node):
         for domain_name, domain in node.domains.iteritems():
-            x, y = node.constraint_network.get_position(domain_name)
+            x, y = node.CONSTRAINT_NETWORK.get_position(domain_name)
             x, y = self.scale_position(x, y)
-            color_id = node.constraint_network.get_color_id(domain)
+            color_id = node.CONSTRAINT_NETWORK.get_color_id(domain)
             color = self.COLOR_MAP[color_id]
             pygame.draw.circle(self.screen, color, [x, y], self.VERTEX_SIZE)
 
     def draw_edges(self, node):
-        for edge in node.constraint_network.edges:
+        for edge in node.CONSTRAINT_NETWORK.edges:
             vertex1, vertex2 = edge
-            x1, y1 = node.constraint_network.get_position(vertex1)
+            x1, y1 = node.CONSTRAINT_NETWORK.get_position(vertex1)
             x1, y1 = self.scale_position(x1, y1)
-            x2, y2 = node.constraint_network.get_position(vertex2)
+            x2, y2 = node.CONSTRAINT_NETWORK.get_position(vertex2)
             x2, y2 = self.scale_position(x2, y2)
 
             pygame.draw.line(self.screen, self.BLACK, [x1, y1], [x2, y2], self.EDGE_WIDTH)

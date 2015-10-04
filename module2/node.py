@@ -22,22 +22,28 @@ class TodoRevise:
 
 class CspNode(BaseNode):
     H_MULTIPLIER = 1
+    CONSTRAINT_NETWORK = None
+    CONSTRAINTS = None
 
-    def __init__(self, domains, constraints, constraint_network, g=None, h=None, parent=None):
+    def __init__(self, domains, g=None, h=None, parent=None):
         """
         domains: dict
-        constraints: list of constraints
-        constraint_network: ConstraintNetwork instance
         """
         self.domains = domains
-        self.constraints = constraints
         self.queue = deque()
-        self.constraint_network = constraint_network  # TODO: this should be static
         super(CspNode, self).__init__(g=g, h=h, parent=parent)
         self.hash_cache = None
 
+    @staticmethod
+    def set_constraint_network(constraint_network):
+        CspNode.CONSTRAINT_NETWORK = constraint_network
+
+    @staticmethod
+    def set_constraints(constraints):
+        CspNode.CONSTRAINTS = constraints
+
     def initialize_csp(self):
-        for constraint in self.constraints.itervalues():
+        for constraint in self.CONSTRAINTS.itervalues():
             for variable in constraint.variables:
                 self.queue.append(TodoRevise(focal_variable=variable, constraint=constraint))
 
@@ -46,7 +52,7 @@ class CspNode(BaseNode):
             todo_revise = self.queue.popleft()
             domain_was_reduced = self.revise(todo_revise.focal_variable, todo_revise.constraint)
             if domain_was_reduced:
-                todo_constraints = self.constraint_network.get_constraints_by_variable(
+                todo_constraints = self.CONSTRAINT_NETWORK.get_constraints_by_variable(
                     variable=todo_revise.focal_variable,
                     current_constraint=todo_revise.constraint
                 )
@@ -94,7 +100,7 @@ class CspNode(BaseNode):
         return has_reduced_domain
 
     def rerun(self, assumed_variable):  # TODO: actually use this function
-        todo_constraints = self.constraint_network.get_constraints_by_variable(
+        todo_constraints = self.CONSTRAINT_NETWORK.get_constraints_by_variable(
             variable=assumed_variable
         )
         for constraint in todo_constraints:
@@ -140,12 +146,12 @@ class CspNode(BaseNode):
 
         for domain_name, domain in self.domains.iteritems():
             if len(domain) == 1:
-                neighbour_names = self.constraint_network.get_neighbour_names(domain_name)
+                neighbour_names = self.CONSTRAINT_NETWORK.get_neighbour_names(domain_name)
                 for neighbour_name in neighbour_names:
                     for value in self.domains[neighbour_name]:
                         domains_copy = deepcopy(self.domains)
                         domains_copy[neighbour_name] = {value}
-                        child = CspNode(domains_copy, self.constraints, self.constraint_network)
+                        child = CspNode(domains_copy)
                         child.rerun(neighbour_name)
                         children.add(child)
 

@@ -145,10 +145,10 @@ class Main(object):
     def run(self):
         # TODO
 
+        CspNode.set_constraint_network(self.constraint_network)
+        CspNode.set_constraints(self.constraint_network.constraints)
         start_node = CspNode(
             domains=deepcopy(self.constraint_network.domains),
-            constraints=self.constraint_network.constraints,
-            constraint_network=self.constraint_network,
             g=0
         )
         # a little optimization: pick a color for the first vertex
