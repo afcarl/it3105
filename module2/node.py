@@ -58,8 +58,8 @@ class CspNode(BaseNode):
                 )
                 for constraint in todo_constraints:
                     for variable in constraint.variables:
-                        # if variable == todo_revise.focal_variable:
-                        #    continue  # TODO: not sure if I should include this
+                        if variable == todo_revise.focal_variable:
+                            continue  # TODO: not sure if I should include this
                         self.queue.append(
                             TodoRevise(
                                 focal_variable=variable,
@@ -99,14 +99,14 @@ class CspNode(BaseNode):
 
         return has_reduced_domain
 
-    def rerun(self, assumed_variable):  # TODO: actually use this function
+    def rerun(self, assumed_variable):
         todo_constraints = self.CONSTRAINT_NETWORK.get_constraints_by_variable(
             variable=assumed_variable
         )
         for constraint in todo_constraints:
             for variable in constraint.variables:
-                # if variable == todo_revise.focal_variable:
-                #    continue  # TODO: not sure if I should include this
+                if variable == assumed_variable:
+                    continue  # TODO: not sure if I should include this
                 self.queue.append(
                     TodoRevise(
                         focal_variable=variable,
@@ -136,8 +136,6 @@ class CspNode(BaseNode):
 
         #self.h = tanh(domain_size_sum / 100000.0) * self.H_MULTIPLIER  # this should be admissible
         self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
-        #if self.h is None: print 'WWWWWWWAAAAAAAAT THE FUCK'
-        #print self.h  # TODO: remove
 
     def generate_children(self):
         children = set()
@@ -154,8 +152,6 @@ class CspNode(BaseNode):
                         child = CspNode(domains_copy)
                         child.rerun(neighbour_name)
                         children.add(child)
-
-        #print 'generated', len(children), 'children'
         return children
 
     def is_solution(self):
@@ -169,7 +165,7 @@ class CspNode(BaseNode):
             other_domain = other_node.domains[domain_name]
             if domain != other_domain:
                 return False
-        return True  # TODO: test
+        return True
 
     def __hash__(self):
         if self.hash_cache is not None:

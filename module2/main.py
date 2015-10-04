@@ -99,9 +99,11 @@ class Main(object):
             initial_domain=initial_domain
         )
 
-        self.gfx = Gfx(fps=args.fps)
+        if not args.disable_gfx:
+            self.gfx = Gfx(fps=args.fps)
+
         self.a_star = AStar(
-            draw=self.gfx.draw,
+            draw=self.gfx.draw if not args.disable_gfx else lambda _: 0,
             disable_gfx=args.disable_gfx,
             draw_every=args.draw_every,
             print_path=args.print_path
