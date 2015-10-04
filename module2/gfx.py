@@ -11,7 +11,7 @@ class Gfx(object):
     """
     size = width, height = 960, 540
 
-    VERTEX_SIZE = 5
+    VERTEX_SIZE = 8
     EDGE_WIDTH = 1
 
     COLOR_MAP = {
@@ -29,18 +29,23 @@ class Gfx(object):
     BLACK = 0, 0, 0
 
     def __init__(self, fps=30.0):
-        self.GU_X = self.width / 16
-        self.GU_Y = self.height / 9
-
         self.screen = pygame.display.set_mode(self.size)
-
         self.clock = pygame.time.Clock()  # used for limiting the fps, so one can see each step
         self.fps = fps
+
+    def scale_position(self, x, y):
+        """
+        Takes in normalized x and y, i.e. with range [0, 1]
+        :param x:
+        :param y:
+        :return: x and y scaled to the size of the window, with 5% margin
+        """
+        return int(round((0.05 + 0.9 * x) * self.width)), int(round((0.05 + 0.9 * y) * self.height))
 
     def draw_vertices(self, node):
         for domain_name, domain in node.domains.iteritems():
             x, y = node.constraint_network.get_position(domain_name)
-            x, y = int(round(x)), int(round(y))
+            x, y = self.scale_position(x, y)
             color_id = node.constraint_network.get_color_id(domain)
             color = self.COLOR_MAP[color_id]
             pygame.draw.circle(self.screen, color, [x, y], self.VERTEX_SIZE)
@@ -49,9 +54,9 @@ class Gfx(object):
         for edge in node.constraint_network.edges:
             vertex1, vertex2 = edge
             x1, y1 = node.constraint_network.get_position(vertex1)
-            x1, y1 = int(round(x1)), int(round(y1))
+            x1, y1 = self.scale_position(x1, y1)
             x2, y2 = node.constraint_network.get_position(vertex2)
-            x2, y2 = int(round(x2)), int(round(y2))
+            x2, y2 = self.scale_position(x2, y2)
 
             pygame.draw.line(self.screen, self.BLACK, [x1, y1], [x2, y2], self.EDGE_WIDTH)
 

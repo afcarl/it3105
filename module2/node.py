@@ -40,7 +40,7 @@ class CspNode(BaseNode):
     def domain_filtering(self):
         while self.queue:
             todo_revise = self.queue.popleft()
-            print 'processing agenda item', todo_revise
+            # print 'processing agenda item', todo_revise
             domain_was_reduced = self.revise(todo_revise.focal_variable, todo_revise.constraint)
             if domain_was_reduced:
                 todo_constraints = self.constraint_network.get_constraints_by_variable(
@@ -58,10 +58,11 @@ class CspNode(BaseNode):
                             )
                         )
 
-                print 'domain was reduced'
+                # print 'domain was reduced'
             else:
-                print 'domain was not reduced'
-        print 'domain filtering is done!'
+                pass
+                # print 'domain was not reduced'
+        # print 'domain filtering is done!'
 
     def has_possible_combinations(self, focal_variable, value, constraint):
         domains_as_list_of_lists = []
@@ -79,8 +80,8 @@ class CspNode(BaseNode):
     def revise(self, focal_variable, constraint):
         values_to_remove = set()
         has_reduced_domain = False
-        print 'revising, and this is self.domains', self.domains
-        print 'focal_variable', focal_variable
+        # print 'revising, and this is self.domains', self.domains
+        # print 'focal_variable', focal_variable
         for value in self.domains[focal_variable]:
             # find all combinations of the other variables, given their current domain
             has_possible_combinations = self.has_possible_combinations(
