@@ -79,6 +79,11 @@ class Main(object):
             constraint_network=self.constraint_network,
             g=0
         )
+        # a little optimization: pick a color for the first vertex
+        first_domain = start_node.domains.itervalues().next()
+        while len(first_domain) > 1:
+            first_domain.pop()
+
         start_node.initialize_csp()
         start_node.domain_filtering()
 
