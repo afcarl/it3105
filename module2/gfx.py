@@ -81,5 +81,3 @@ class Gfx(object):
 
         pygame.display.flip()
 
-        import time
-        time.sleep(5)

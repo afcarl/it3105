@@ -46,4 +46,4 @@ class BaseNode(object):
         pass  # must be implemented
 
     def get_arc_cost(self, other_node):
-        return BaseNode.ARC_COST_MULTIPLIER
+        return self.ARC_COST_MULTIPLIER

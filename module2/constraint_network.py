@@ -102,12 +102,14 @@ class VertexColorConstraintNetwork(ConstraintNetwork):
         for vertex in vertices:
             vertex.domain = set(initial_domain)
             domains[vertex.name] = vertex.domain
+            vertex.neighbours = set()
             self.vertices[vertex.name] = vertex
-
 
         constraints = {}
         for edge in edges:
             expression = str(edge[0]) + " != " + str(edge[1])
+            self.vertices[edge[0]].neighbours.add(edge[1])
+            self.vertices[edge[1]].neighbours.add(edge[0])
             name = str(edge[0]) + "<->" + str(edge[1])
             constraint = Constraint(name=name, variables=edge, expression=expression)
             constraints[name] = constraint
@@ -141,6 +143,9 @@ class VertexColorConstraintNetwork(ConstraintNetwork):
             vertex.y -= min_y
             vertex.x /= max_width
             vertex.y /= max_height
+
+    def get_neighbour_names(self, vertex_name):
+        return self.vertices[vertex_name].neighbours
 
     def get_position(self, vertex_name):
         return self.vertices[vertex_name].x, self.vertices[vertex_name].y

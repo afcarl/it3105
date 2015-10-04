@@ -1,11 +1,13 @@
 import sys
 from os import path
+from math import tanh
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from module1.base_node import BaseNode
 import itertools
 from collections import deque
+from copy import deepcopy
 
 
 class TodoRevise:
@@ -19,18 +21,20 @@ class TodoRevise:
 
 
 class CspNode(BaseNode):
-    """
-    domains: dict
-    constraints: list of constraints
-    constraint_network: ConstraintNetwork instance
-    """
+    H_MULTIPLIER = 1
 
     def __init__(self, domains, constraints, constraint_network, g=None, h=None, parent=None):
+        """
+        domains: dict
+        constraints: list of constraints
+        constraint_network: ConstraintNetwork instance
+        """
         self.domains = domains
         self.constraints = constraints
         self.queue = deque()
         self.constraint_network = constraint_network  # TODO: this should be static
         super(CspNode, self).__init__(g=g, h=h, parent=parent)
+        self.hash_cache = None
 
     def initialize_csp(self):
         for constraint in self.constraints.itervalues():
@@ -40,7 +44,6 @@ class CspNode(BaseNode):
     def domain_filtering(self):
         while self.queue:
             todo_revise = self.queue.popleft()
-            # print 'processing agenda item', todo_revise
             domain_was_reduced = self.revise(todo_revise.focal_variable, todo_revise.constraint)
             if domain_was_reduced:
                 todo_constraints = self.constraint_network.get_constraints_by_variable(
@@ -58,12 +61,6 @@ class CspNode(BaseNode):
                             )
                         )
 
-                # print 'domain was reduced'
-            else:
-                pass
-                # print 'domain was not reduced'
-        # print 'domain filtering is done!'
-
     def has_possible_combinations(self, focal_variable, value, constraint):
         domains_as_list_of_lists = []
         for variable in constraint.ordered_variables:
@@ -80,8 +77,6 @@ class CspNode(BaseNode):
     def revise(self, focal_variable, constraint):
         values_to_remove = set()
         has_reduced_domain = False
-        # print 'revising, and this is self.domains', self.domains
-        # print 'focal_variable', focal_variable
         for value in self.domains[focal_variable]:
             # find all combinations of the other variables, given their current domain
             has_possible_combinations = self.has_possible_combinations(
@@ -112,18 +107,56 @@ class CspNode(BaseNode):
                         constraint=constraint
                     )
                 )
+        self.domain_filtering()
+
+    def is_dead_end(self):
+        # TODO: test
+        for domain in self.domains.itervalues():
+            if len(domain) == 0:
+                print 'found dead end', self
+                return True
+        return False
 
     def calculate_h(self):
-        self.h = 1  # TODO: implement
+        # TODO: improve heuristic... but how?
+        domain_size_sum = 0
+
+        for domain in self.domains.itervalues():
+            domain_len = len(domain)
+            if domain_len == 0:
+                self.h = 99999999999999999 * self.H_MULTIPLIER
+                return
+            domain_size_sum += domain_len - 1
+
+        #self.h = tanh(domain_size_sum / 100000.0) * self.H_MULTIPLIER  # this should be admissible
+        self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
+        #if self.h is None: print 'WWWWWWWAAAAAAAAT THE FUCK'
+        #print self.h  # TODO: remove
 
     def generate_children(self):
-        return []  # TODO: implement
+        children = set()
+        if self.is_dead_end():
+            return children
+
+        for domain_name, domain in self.domains.iteritems():
+            if len(domain) == 1:
+                neighbour_names = self.constraint_network.get_neighbour_names(domain_name)
+                for neighbour_name in neighbour_names:
+                    for value in self.domains[neighbour_name]:
+                        domains_copy = deepcopy(self.domains)
+                        domains_copy[neighbour_name] = {value}
+                        child = CspNode(domains_copy, self.constraints, self.constraint_network)
+                        child.rerun(neighbour_name)
+                        children.add(child)
+
+        #print 'generated', len(children), 'children'
+        return children
 
     def is_solution(self):
         for domain in self.domains.itervalues():
             if len(domain) != 1:
                 return False
-        return True  # TODO: test
+        return True
 
     def __eq__(self, other_node):
         for domain_name, domain in self.domains.iteritems():
@@ -133,9 +166,9 @@ class CspNode(BaseNode):
         return True  # TODO: test
 
     def __hash__(self):
-        #if self.hash_cache:
-        #    return self.hash_cache  # TODO: check if uncommenting this (and that below) improves perf
+        if self.hash_cache is not None:
+            return self.hash_cache
         frozen_items = [frozenset(domain) for domain in self.domains.itervalues()]
         hash_result = hash(tuple(sorted(frozen_items)))
-        # self.hash_cache = hash_result
+        self.hash_cache = hash_result
         return hash_result
