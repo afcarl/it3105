@@ -16,7 +16,7 @@ class Node(BaseNode):
     def calculate_h(self):
         self.h = self.position.euclidean_distance_to(self.board.goal) * Node.H_MULTIPLIER
 
-    def get_children(self):
+    def generate_children(self):
         children = set()
         candidate_positions = {
             Point(x=self.position.x, y=self.position.y + 1),

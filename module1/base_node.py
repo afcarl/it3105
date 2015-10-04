@@ -23,7 +23,7 @@ class BaseNode(object):
     def calculate_h(self):
         pass  # must be implemented
 
-    def get_children(self):
+    def generate_children(self):
         pass  # must be implemented
 
     def is_solution(self):

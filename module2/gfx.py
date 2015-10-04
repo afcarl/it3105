@@ -18,7 +18,7 @@ class Gfx(object):
     BLUE = 109, 142, 224
     PINK = 255, 130, 234
 
-    def __init__(self, fps):
+    def __init__(self, fps=30.0):
         self.GU_X = self.width / 16
         self.GU_Y = self.height / 9
 
@@ -35,7 +35,7 @@ class Gfx(object):
         for arc in arcs:
             pass  # TODO: draw arcs
 
-    def draw(self, current_node):
+    def draw(self, current_node, ancestors, open_list, closed_list):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()

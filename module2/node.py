@@ -1,4 +1,9 @@
-from module1.node import BaseNode
+import sys
+from os import path
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from module1.base_node import BaseNode
 import itertools
 from collections import deque
 
@@ -13,13 +18,6 @@ class TodoRevise:
                + ", constraint: " + self.constraint.expression
 
 
-class Vertex(object):
-    def __init__(self, i, x, y):
-        self.i = i
-        self.x = x
-        self.y = y
-
-
 class CspNode(BaseNode):
     """
     domains: dict
@@ -27,13 +25,12 @@ class CspNode(BaseNode):
     constraint_network: ConstraintNetwork instance
     """
 
-    def __init__(self, position, domains, constraints, constraint_network):
-        self.position = position
+    def __init__(self, domains, constraints, constraint_network, g=None, h=None, parent=None):
         self.domains = domains
         self.constraints = constraints
         self.queue = deque()
         self.constraint_network = constraint_network  # TODO: this should be static
-        super(CspNode, self).__init__()
+        super(CspNode, self).__init__(g=g, h=h, parent=parent)
 
     def initialize_csp(self):
         for constraint in self.constraints.itervalues():
@@ -52,7 +49,7 @@ class CspNode(BaseNode):
                 )
                 for constraint in todo_constraints:
                     for variable in constraint.variables:
-                        #if variable == todo_revise.focal_variable:
+                        # if variable == todo_revise.focal_variable:
                         #    continue  # TODO: not sure if I should include this
                         self.queue.append(
                             TodoRevise(
@@ -106,7 +103,7 @@ class CspNode(BaseNode):
         )
         for constraint in todo_constraints:
             for variable in constraint.variables:
-                #if variable == todo_revise.focal_variable:
+                # if variable == todo_revise.focal_variable:
                 #    continue  # TODO: not sure if I should include this
                 self.queue.append(
                     TodoRevise(
@@ -114,3 +111,30 @@ class CspNode(BaseNode):
                         constraint=constraint
                     )
                 )
+
+    def calculate_h(self):
+        self.h = 1  # TODO: implement
+
+    def generate_children(self):
+        return []  # TODO: implement
+
+    def is_solution(self):
+        for domain in self.domains.itervalues():
+            if len(domain) != 1:
+                return False
+        return True  # TODO: test
+
+    def __eq__(self, other_node):
+        for domain_name, domain in self.domains.iteritems():
+            other_domain = other_node.domains[domain_name]
+            if domain != other_domain:
+                return False
+        return True  # TODO: test
+
+    def __hash__(self):
+        #if self.hash_cache:
+        #    return self.hash_cache  # TODO: check if uncommenting this (and that below) improves perf
+        frozen_items = [frozenset(domain) for domain in self.domains.itervalues()]
+        hash_result = hash(tuple(sorted(frozen_items)))
+        # self.hash_cache = hash_result
+        return hash_result

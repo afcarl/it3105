@@ -49,7 +49,7 @@ class AStar(object):
                     for ancestor in ancestors:
                         print ancestor
                 return current_node
-            children = current_node.get_children()
+            children = current_node.generate_children()
             for child in children:
                 previously_generated = False
                 if child in open_list:

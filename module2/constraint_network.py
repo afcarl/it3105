@@ -1,14 +1,14 @@
 class Constraint(object):
     """
     name: string
-    variables: list
+    variables: list or tuple
     expression: string
     """
     def __init__(self, name, variables, expression):
         self.name = name
-        self.ordered_variables = variables
+        self.ordered_variables = list(variables)
         self.variables = set(variables)
-        self.function = self.make_function(variables, expression)
+        self.function = self.make_function(self.ordered_variables, expression)
         self.expression = expression
 
     def __repr__(self):
@@ -42,19 +42,31 @@ class Constraint(object):
 
 
 class Variable(object):
+    """
+    Superclass
+    """
     def __init__(self, name, domain):
         self.name = name
         self.domain = domain
 
 
 class VertexColorVariable(Variable):
-    def __init__(self, domain, i, x, y):
-        super(VertexColorVariable, self).__init__(name=i, domain=domain)
+    """
+    Problem-specific (graph coloring) class
+    """
+    def __init__(self, i, x, y):
+        super(VertexColorVariable, self).__init__(name=i, domain=None)
         self.x = x
         self.y = y
 
 
 class ConstraintNetwork(object):
+    """
+    Superclass
+
+    constraints: dict {constraint_name: constraint_instance}
+    domains: dict {domain_name: set(values)}
+    """
     def __init__(self, constraints, domains):
         self.constraints = constraints
         self.domains = domains
@@ -75,6 +87,26 @@ class ConstraintNetwork(object):
 
 
 class VertexColorConstraintNetwork(ConstraintNetwork):
-    def __init__(self, vertices, edges):
-        # TODO
-        pass
+    """
+    Problem-specific class
+    vertices: list of VertexColorVariable instances
+    edges: list of tuples
+    initial_domain: list of numbers that shall be put into each domain initially
+    """
+    def __init__(self, vertices, edges, initial_domain):
+        self.vertices = vertices  # TODO: dunno if needed
+        self.edges = edges  # TODO: dunno if needed
+
+        domains = {}
+        for vertex in vertices:
+            vertex.domain = set(initial_domain)
+            domains[vertex.name] = vertex.domain
+
+        constraints = {}
+        for edge in edges:
+            expression = str(edge[0]) + " != " + str(edge[1])
+            name = str(edge[0]) + "<->" + str(edge[1])
+            constraint = Constraint(name=name, variables=edge, expression=expression)
+            constraints[name] = constraint
+
+        super(VertexColorConstraintNetwork, self).__init__(constraints=constraints, domains=domains)
