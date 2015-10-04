@@ -70,6 +70,7 @@ class ConstraintNetwork(object):
     def __init__(self, constraints, domains):
         self.constraints = constraints
         self.domains = domains
+        self.variable_constraints_cache = {}
 
     def get_constraints_by_variable(self, variable, current_constraint=None):
         """
@@ -78,11 +79,20 @@ class ConstraintNetwork(object):
         :param current_constraint:
         :return:
         """
+        hash_key = hash(
+            variable +
+            ('' if current_constraint is None else "__" + current_constraint.expression)
+        )
+        if hash_key in self.variable_constraints_cache:
+            return self.variable_constraints_cache[hash_key]
+
         constraints = set()
         for constraint_name in self.constraints:
             constraint = self.constraints[constraint_name]
             if constraint != current_constraint and constraint.has_input_variable(variable):
                 constraints.add(constraint)
+
+        self.variable_constraints_cache[hash_key] = constraints
         return constraints
 
 

@@ -132,7 +132,7 @@ class CspNode(BaseNode):
             if domain_len == 0:
                 self.h = 99999999999999999 * self.H_MULTIPLIER
                 return
-            domain_size_sum += domain_len - 1
+            domain_size_sum += domain_len
 
         #self.h = tanh(domain_size_sum / 100000.0) * self.H_MULTIPLIER  # this should be admissible
         self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
@@ -160,7 +160,7 @@ class CspNode(BaseNode):
                 return False
         return True
 
-    def __eq__(self, other_node):
+    def __eq__(self, other_node):  # TODO: test
         for domain_name, domain in self.domains.iteritems():
             other_domain = other_node.domains[domain_name]
             if domain != other_domain:
