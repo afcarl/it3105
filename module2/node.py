@@ -1,6 +1,6 @@
 import sys
 from os import path
-from math import tanh
+# from math import tanh
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -59,7 +59,7 @@ class CspNode(BaseNode):
                 for constraint in todo_constraints:
                     for variable in constraint.variables:
                         if variable == todo_revise.focal_variable:
-                            continue  # TODO: not sure if I should include this
+                            continue  # optimization
                         self.queue.append(
                             TodoRevise(
                                 focal_variable=variable,
@@ -68,14 +68,12 @@ class CspNode(BaseNode):
                         )
 
     def has_possible_combinations(self, focal_variable, value, constraint):
-        domains_as_list_of_lists = []
-        for variable in constraint.ordered_variables:
-            if variable == focal_variable:
-                domains_as_list_of_lists.append([value])
-            else:
-                domains_as_list_of_lists.append(self.domains[variable])
-        combinations = list(itertools.product(*domains_as_list_of_lists))
-        for combination in combinations:
+        domains_as_list_of_lists = [
+            (value,) if variable == focal_variable else self.domains[variable]
+            for variable in constraint.ordered_variables
+        ]
+
+        for combination in itertools.product(*domains_as_list_of_lists):
             if constraint.is_satisfied(*combination):
                 return True
         return False
@@ -106,7 +104,7 @@ class CspNode(BaseNode):
         for constraint in todo_constraints:
             for variable in constraint.variables:
                 if variable == assumed_variable:
-                    continue  # TODO: not sure if I should include this
+                    continue  # optimization
                 self.queue.append(
                     TodoRevise(
                         focal_variable=variable,
@@ -124,7 +122,6 @@ class CspNode(BaseNode):
         return False
 
     def calculate_h(self):
-        # TODO: improve heuristic... but how?
         domain_size_sum = 0
 
         for domain in self.domains.itervalues():
@@ -160,7 +157,7 @@ class CspNode(BaseNode):
                 return False
         return True
 
-    def __eq__(self, other_node):  # TODO: test
+    def __eq__(self, other_node):
         for domain_name, domain in self.domains.iteritems():
             other_domain = other_node.domains[domain_name]
             if domain != other_domain:
