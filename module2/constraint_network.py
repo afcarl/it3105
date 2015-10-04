@@ -94,13 +94,14 @@ class VertexColorConstraintNetwork(ConstraintNetwork):
     initial_domain: list of numbers that shall be put into each domain initially
     """
     def __init__(self, vertices, edges, initial_domain):
-        self.vertices = vertices  # TODO: dunno if needed
         self.edges = edges  # TODO: dunno if needed
 
+        self.vertices = {}
         domains = {}
         for vertex in vertices:
             vertex.domain = set(initial_domain)
             domains[vertex.name] = vertex.domain
+            self.vertices[vertex.name] = vertex
 
         constraints = {}
         for edge in edges:
@@ -110,3 +111,14 @@ class VertexColorConstraintNetwork(ConstraintNetwork):
             constraints[name] = constraint
 
         super(VertexColorConstraintNetwork, self).__init__(constraints=constraints, domains=domains)
+
+    def get_position(self, vertex_name):
+        return self.vertices[vertex_name].x, self.vertices[vertex_name].y
+
+    @staticmethod
+    def get_color_id(vertex_domain):
+        if len(vertex_domain) == 1:
+            for color_id in vertex_domain:
+                return color_id
+        else:
+            return -1

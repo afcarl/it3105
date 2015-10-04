@@ -10,13 +10,23 @@ class Gfx(object):
     This class takes care of drawing the state of the search to a window using pygame
     """
     size = width, height = 960, 540
+
+    VERTEX_SIZE = 5
+    EDGE_WIDTH = 1
+
+    COLOR_MAP = {
+        -1: (128, 128, 128),  # grey
+        0: (255, 236, 130),  # yellow
+        1: (47, 160, 19),  # green
+        2: (109, 142, 224),  # blue
+        3: (255, 130, 234),  # pink
+        4: (132, 19, 160),  # purple
+        5: (224, 191, 109),  # bronze
+        6: (89, 255, 208),  # teal
+        7: (255, 79, 108)  # red
+    }
     WHITE = 255, 255, 255
     BLACK = 0, 0, 0
-    YELLOW = 255, 236, 193
-    GREEN = 47, 160, 19
-    GREY = 128, 128, 128
-    BLUE = 109, 142, 224
-    PINK = 255, 130, 234
 
     def __init__(self, fps=30.0):
         self.GU_X = self.width / 16
@@ -27,13 +37,23 @@ class Gfx(object):
         self.clock = pygame.time.Clock()  # used for limiting the fps, so one can see each step
         self.fps = fps
 
-    def draw_dots(self, nodes):
-        for node in nodes:
-            pygame.draw.circle(self.screen, node.get_color(), [60, 250], 40)
+    def draw_vertices(self, node):
+        for domain_name, domain in node.domains.iteritems():
+            x, y = node.constraint_network.get_position(domain_name)
+            x, y = int(round(x)), int(round(y))
+            color_id = node.constraint_network.get_color_id(domain)
+            color = self.COLOR_MAP[color_id]
+            pygame.draw.circle(self.screen, color, [x, y], self.VERTEX_SIZE)
 
-    def draw_arcs(self, arcs):
-        for arc in arcs:
-            pass  # TODO: draw arcs
+    def draw_edges(self, node):
+        for edge in node.constraint_network.edges:
+            vertex1, vertex2 = edge
+            x1, y1 = node.constraint_network.get_position(vertex1)
+            x1, y1 = int(round(x1)), int(round(y1))
+            x2, y2 = node.constraint_network.get_position(vertex2)
+            x2, y2 = int(round(x2)), int(round(y2))
+
+            pygame.draw.line(self.screen, self.BLACK, [x1, y1], [x2, y2], self.EDGE_WIDTH)
 
     def draw(self, current_node, ancestors, open_list, closed_list):
         for event in pygame.event.get():
@@ -51,7 +71,10 @@ class Gfx(object):
 
         self.screen.fill(self.WHITE)
 
-        self.draw_dots(current_node.get_dots())
-        self.draw_arcs(current_node.get_arcs())
+        self.draw_edges(current_node)
+        self.draw_vertices(current_node)
 
         pygame.display.flip()
+
+        import time
+        time.sleep(5)
