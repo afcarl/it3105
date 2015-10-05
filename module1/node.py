@@ -33,16 +33,6 @@ class Node(BaseNode):
     def is_solution(self):
         return self.position.x == self.board.goal.x and self.position.y == self.board.goal.y
 
-    def get_ancestors(self):
-        ancestors = []
-        current_node = self
-        while True:
-            if current_node.parent is None:
-                return ancestors
-            else:
-                ancestors.append(current_node.parent)
-                current_node = current_node.parent
-
     def __eq__(self, other_node):
         return self.position.as_tuple() == other_node.position.as_tuple()
 
@@ -51,9 +41,6 @@ class Node(BaseNode):
 
     def get_arc_cost(self, other_node):
         return Node.ARC_COST_MULTIPLIER
-
-    def equals(self, other_node):
-        return self.position.x == other_node.position.x and self.position.y == other_node.position.y
 
     def __str__(self):
         return "x:" + str(self.position.x) + \

@@ -20,9 +20,9 @@ class TestNode(unittest.TestCase):
         node3 = Node(position1, 2, None, node2)
 
         # test equals()
-        self.assertTrue(node1.equals(node1))
-        self.assertFalse(node1.equals(node2))
-        self.assertTrue(node1.equals(node3))
+        self.assertTrue(node1.__eq__(node1))
+        self.assertFalse(node1.__eq__(node2))
+        self.assertTrue(node1.__eq__(node3))
 
         # test as_tuple()
         self.assertEquals(node1.position.as_tuple(), (8, 9))
@@ -33,9 +33,9 @@ class TestNode(unittest.TestCase):
 
         # test get_ancestors()
         ancestors = goal_node.get_ancestors()
-        self.assertTrue(ancestors[0].equals(node3))
-        self.assertTrue(ancestors[1].equals(node2))
-        self.assertTrue(ancestors[2].equals(node1))
+        self.assertTrue(ancestors[0].__eq__(node3))
+        self.assertTrue(ancestors[1].__eq__(node2))
+        self.assertTrue(ancestors[2].__eq__(node1))
 
 if __name__ == '__main__':
     unittest.main()
