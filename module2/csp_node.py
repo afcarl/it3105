@@ -142,7 +142,12 @@ class CspNode(BaseNode):
         for domain_name, domain in self.domains.iteritems():
             if len(domain) == 1:
                 neighbour_names = self.CONSTRAINT_NETWORK.get_neighbour_names(domain_name)
-                for neighbour_name in neighbour_names:
+                sorted_neighbour_names = sorted(
+                    neighbour_names,
+                    key=lambda name: len(self.domains[name])
+                )
+                
+                for neighbour_name in sorted_neighbour_names:
                     if len(self.domains[neighbour_name]) > 1:
                         for value in self.domains[neighbour_name]:
                             domains_copy = deepcopy(self.domains)
