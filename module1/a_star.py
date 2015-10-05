@@ -27,6 +27,16 @@ class AStar(object):
             child_node.calculate_f()
             child_node.set_parent(parent_node)
 
+        def print_stats(_current_node, _closed_list, _open_list, _num_nodes_popped, _print_path):
+            print "number of nodes created:", len(_closed_list) + len(_open_list.dict)
+            print "number of nodes popped:", _num_nodes_popped
+            print "path length:", len(_current_node.get_ancestors())
+            if _print_path:
+                print "backtracked nodes that led to the solution:"
+                print current_node
+                for ancestor in ancestors:
+                    print ancestor
+
         # If the algorithm still hasn't found a solution after the max number of iterations,
         # then the algorithm will stop
         max_num_iterations = 50000000
@@ -35,6 +45,7 @@ class AStar(object):
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
+                print_stats(current_node, closed_list, open_list, num_nodes_popped, self.print_path)
                 return False, current_node
             current_node = open_list.pop()
             num_nodes_popped += 1
@@ -43,15 +54,7 @@ class AStar(object):
                 ancestors = current_node.get_ancestors()
                 self.draw(current_node, ancestors, closed_list, open_list)  # draw current state
             if current_node.is_solution():
-                print "number of nodes created:", len(closed_list) + len(open_list.dict)
-                print "number of nodes popped:", num_nodes_popped
-                ancestors = current_node.get_ancestors()
-                print "path length:", len(ancestors)
-                if self.print_path:
-                    print "backtracked nodes that led to the solution:"
-                    print current_node
-                    for ancestor in ancestors:
-                        print ancestor
+                print_stats(current_node, closed_list, open_list, num_nodes_popped, self.print_path)
                 return True, current_node
             children = current_node.generate_children()
             for child in children:
@@ -70,4 +73,5 @@ class AStar(object):
                     attach_and_eval(current_node, child)
 
         print 'Failed to find a solution within the max number of iterations,', max_num_iterations
+        print_stats(current_node, closed_list, open_list, num_nodes_popped, self.print_path)
         return False, current_node
