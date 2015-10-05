@@ -149,7 +149,6 @@ class Main(object):
         start_node.initialize_csp()
         start_node.domain_filtering()
 
-        print 'running'
         self.a_star.run(start_node=start_node)
         if self.sleep_afterwards:
             time.sleep(5)

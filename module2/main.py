@@ -152,7 +152,6 @@ class Main(object):
         start_node.initialize_csp()
         start_node.domain_filtering()
 
-        print 'running'
         success, end_node = self.a_star.run(start_node=start_node)
 
         num_unsatisfied_constraints = end_node.get_num_unsatisfied_constraints()
