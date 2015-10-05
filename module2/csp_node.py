@@ -146,7 +146,7 @@ class CspNode(BaseNode):
                     neighbour_names,
                     key=lambda name: len(self.domains[name])
                 )
-                
+
                 for neighbour_name in sorted_neighbour_names:
                     if len(self.domains[neighbour_name]) > 1:
                         for value in self.domains[neighbour_name]:

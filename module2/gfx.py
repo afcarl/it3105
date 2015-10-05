@@ -24,7 +24,7 @@ class Gfx(object):
         7: (255, 79, 108)  # red
     }
     WHITE = 255, 255, 255
-    GREY = 128, 128, 128
+    BLACK = 0, 0, 0
 
     def __init__(self, fps=30.0):
         self.screen = pygame.display.set_mode(self.size)
@@ -56,7 +56,7 @@ class Gfx(object):
             x2, y2 = node.CONSTRAINT_NETWORK.get_position(vertex2)
             x2, y2 = self.scale_position(x2, y2)
 
-            pygame.draw.line(self.screen, self.GREY, [x1, y1], [x2, y2], self.EDGE_WIDTH)
+            pygame.draw.line(self.screen, self.BLACK, [x1, y1], [x2, y2], self.EDGE_WIDTH)
 
     def draw(self, current_node, ancestors, open_list, closed_list):
         for event in pygame.event.get():
@@ -78,4 +78,3 @@ class Gfx(object):
         self.draw_vertices(current_node)
 
         pygame.display.flip()
-
