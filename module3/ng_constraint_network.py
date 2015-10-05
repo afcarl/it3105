@@ -27,11 +27,55 @@ class NgConstraintNetwork(ConstraintNetwork):
     """
 
     def __init__(self, num_cols, num_rows, row_segments, col_segments):
+        domains = {}
 
-        # TODO: calculate domains and constraints
+        # calculate and add column domains
+        for col_index in range(len(col_segments)):
+            start_index_domains = NgConstraintNetwork.get_start_index_domains(
+                num_rows,
+                col_segments[col_index]
+            )
+            possible_combinations = NgConstraintNetwork.get_possible_combinations(
+                num_rows,
+                col_segments[col_index],
+                start_index_domains
+            )
 
-        constraints = None
-        domains = None
+            col_key = "c" + str(col_index)
+            domains[col_key] = possible_combinations
+
+        # calculate and add row domains
+        for row_index in range(len(row_segments)):
+            start_index_domains = NgConstraintNetwork.get_start_index_domains(
+                num_cols,
+                row_segments[row_index]
+            )
+            possible_combinations = NgConstraintNetwork.get_possible_combinations(
+                num_cols,
+                row_segments[row_index],
+                start_index_domains
+            )
+
+            row_key = "r" + str(row_index)
+            domains[row_key] = possible_combinations
+
+        # Calculate constraints. One for each cell
+        constraints = {}
+        for i in range(num_rows):
+            for j in range(num_cols):
+                constraint_variables = ('r' + str(i), 'c' + str(j))
+                constraint_expression = "{}[{}] == {}[{}]".format(
+                    constraint_variables[0],
+                    j,
+                    constraint_variables[1],
+                    i
+                )
+                constraint = Constraint(
+                    name=constraint_expression,
+                    variables=constraint_variables,
+                    expression=constraint_expression
+                )
+                constraints[constraint_expression] = constraint
 
         super(NgConstraintNetwork, self).__init__(constraints=constraints, domains=domains)
 
