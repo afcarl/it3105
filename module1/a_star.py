@@ -31,17 +31,20 @@ class AStar(object):
         # then the algorithm will stop
         max_num_iterations = 50000000
         current_node = None
+        num_nodes_popped = 0
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
                 return False, current_node
             current_node = open_list.pop()
+            num_nodes_popped += 1
             closed_list[current_node] = current_node
             if not self.disable_gfx and num_iterations % self.draw_every == 0:
                 ancestors = current_node.get_ancestors()
                 self.draw(current_node, ancestors, closed_list, open_list)  # draw current state
             if current_node.is_solution():
                 print "number of nodes created:", len(closed_list) + len(open_list.dict)
+                print "number of nodes popped:", num_nodes_popped
                 ancestors = current_node.get_ancestors()
                 print "path length:", len(ancestors)
                 if self.print_path:
