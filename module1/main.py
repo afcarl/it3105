@@ -113,16 +113,15 @@ class Main:
         Parse the lines of the input file according to the spec
         :param lines: array
         """
-        dimensions_tuple = literal_eval(lines[0])
-        dimensions = Rect(0, 0, dimensions_tuple[0], dimensions_tuple[1])
-        start_tuple = literal_eval(lines[1].split(' ')[0])
-        start = Point(x=start_tuple[0], y=start_tuple[1])
-        goal_tuple = literal_eval(lines[1].split(' ')[1])
-        goal = Point(x=goal_tuple[0], y=goal_tuple[1])
-        barrier_tuples = lines[2:]
+        width, height = map(int, lines[0].split(' '))
+        dimensions = Rect(0, 0, width, height)
+        start_x, start_y, goal_x, goal_y = map(int, lines[1].split(' '))
+        start = Point(x=start_x, y=start_y)
+        goal = Point(x=goal_x, y=goal_y)
+        barrier_lines = lines[2:]
         barriers = []
-        for barrier_tuple in barrier_tuples:
-            barrier_tuple = literal_eval(barrier_tuple)
+        for barrier_line in barrier_lines:
+            barrier_tuple = tuple(map(int, barrier_line.split(' ')))
             barrier = Rect(*barrier_tuple)
             barriers.append(barrier)
         return dimensions, start, goal, barriers
