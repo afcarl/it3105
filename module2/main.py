@@ -1,5 +1,5 @@
 import argparse
-from csp_node import CspNode
+from vc_csp_node import VcCspNode
 from vc_constraint_network import VertexColorVariable, VertexColorConstraintNetwork
 from module1.a_star import AStar
 from copy import deepcopy
@@ -78,10 +78,10 @@ class Main(object):
         args = arg_parser.parse_args()
 
         if args.mode == 'bfs':
-            CspNode.H_MULTIPLIER = 0
+            VcCspNode.H_MULTIPLIER = 0
         elif args.mode == 'dfs':
-            CspNode.H_MULTIPLIER = 0
-            CspNode.ARC_COST_MULTIPLIER = 0
+            VcCspNode.H_MULTIPLIER = 0
+            VcCspNode.ARC_COST_MULTIPLIER = 0
 
         f = open(args.filename)
         lines = []
@@ -146,9 +146,9 @@ class Main(object):
         return num_vertices, num_edges, vertices, edges
 
     def run(self):
-        CspNode.set_constraint_network(self.constraint_network)
-        CspNode.set_constraints(self.constraint_network.constraints)
-        start_node = CspNode(
+        VcCspNode.set_constraint_network(self.constraint_network)
+        VcCspNode.set_constraints(self.constraint_network.constraints)
+        start_node = VcCspNode(
             domains=deepcopy(self.constraint_network.domains),
             g=0
         )

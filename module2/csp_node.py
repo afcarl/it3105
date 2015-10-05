@@ -31,7 +31,6 @@ class CspNode(BaseNode):
         self.domains = domains
         self.queue = deque()
         super(CspNode, self).__init__(g=g, h=h, parent=parent)
-        self.hash_cache = None
 
     @staticmethod
     def set_constraint_network(constraint_network):
@@ -113,24 +112,10 @@ class CspNode(BaseNode):
         self.domain_filtering()
 
     def is_dead_end(self):
-        # TODO: test
         for domain in self.domains.itervalues():
             if len(domain) == 0:
-                print 'found dead end', self
                 return True
         return False
-
-    def calculate_h(self):
-        domain_size_sum = 0
-
-        for domain in self.domains.itervalues():
-            domain_len = len(domain)
-            if domain_len == 0:
-                self.h = 99999999999999999 * self.H_MULTIPLIER
-                return
-            domain_size_sum += domain_len
-
-        self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
 
     def generate_children(self):
         children = set()
@@ -150,29 +135,8 @@ class CspNode(BaseNode):
                         for value in self.domains[neighbour_name]:
                             domains_copy = deepcopy(self.domains)
                             domains_copy[neighbour_name] = {value}
-                            child = CspNode(domains_copy)
+                            child = self.__class__(domains_copy)
                             child.rerun(neighbour_name)
                             children.add(child)
-                        return children  # Only assume a value for ONE undecided vertex color
+                        return children  # Only assume a value for ONE undecided domain
         return children
-
-    def is_solution(self):
-        for domain in self.domains.itervalues():
-            if len(domain) != 1:
-                return False
-        return True
-
-    def __eq__(self, other_node):
-        for domain_name, domain in self.domains.iteritems():
-            other_domain = other_node.domains[domain_name]
-            if domain != other_domain:
-                return False
-        return True
-
-    def __hash__(self):
-        if self.hash_cache is not None:
-            return self.hash_cache
-        frozen_items = [frozenset(domain) for domain in self.domains.itervalues()]
-        hash_result = hash(tuple(sorted(frozen_items)))
-        self.hash_cache = hash_result
-        return hash_result

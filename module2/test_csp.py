@@ -1,7 +1,6 @@
 import unittest
 from constraint_network import Constraint, ConstraintNetwork
 from csp_node import CspNode
-from module1.point import Point
 
 
 class TestCspNode(unittest.TestCase):
