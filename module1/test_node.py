@@ -2,7 +2,7 @@ import unittest
 from rect import Rect
 from point import Point
 from board import Board
-from node import Node
+from nav_node import NavNode
 
 
 class TestNode(unittest.TestCase):
@@ -11,13 +11,13 @@ class TestNode(unittest.TestCase):
         start = Point(x=3, y=4)
         goal = Point(x=8, y=11)
         barriers = []
-        Node.board = Board(dimensions, start, goal, barriers)
+        NavNode.board = Board(dimensions, start, goal, barriers)
 
         position1 = Point(x=8, y=9)
-        node1 = Node(position1, 0)
+        node1 = NavNode(position1, 0)
         position2 = Point(x=8, y=10)
-        node2 = Node(position2, 1, None, node1)
-        node3 = Node(position1, 2, None, node2)
+        node2 = NavNode(position2, 1, None, node1)
+        node3 = NavNode(position1, 2, None, node2)
 
         # test equals()
         self.assertTrue(node1.__eq__(node1))
@@ -28,7 +28,7 @@ class TestNode(unittest.TestCase):
         self.assertEquals(node1.position.as_tuple(), (8, 9))
 
         # test is_solution()
-        goal_node = Node(goal, 3, None, node3)
+        goal_node = NavNode(goal, 3, None, node3)
         self.assertTrue(goal_node.is_solution())
 
         # test get_ancestors()

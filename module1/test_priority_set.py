@@ -1,20 +1,20 @@
 import unittest
 from priority_set import NodePrioritySet
 from point import Point
-from node import Node
+from nav_node import NavNode
 
 
 class TestNodePrioritySet(unittest.TestCase):
     def test_methods(self):
-        self.node1 = Node(Point(x=0, y=0), 2, 4)
+        self.node1 = NavNode(Point(x=0, y=0), 2, 4)
         self.node1.calculate_f()
-        self.node2 = Node(Point(x=1, y=0), 2, 3)
+        self.node2 = NavNode(Point(x=1, y=0), 2, 3)
         self.node2.calculate_f()
-        self.node3 = Node(Point(x=2, y=0), 2, 2)
+        self.node3 = NavNode(Point(x=2, y=0), 2, 2)
         self.node3.calculate_f()
-        self.node4 = Node(Point(x=2, y=1), 2, 1)
+        self.node4 = NavNode(Point(x=2, y=1), 2, 1)
         self.node4.calculate_f()
-        self.node5 = Node(Point(x=2, y=0), 3, 2)  # like node3
+        self.node5 = NavNode(Point(x=2, y=0), 3, 2)  # like node3
 
         my_collection = NodePrioritySet()
         my_collection.add(self.node2, self.node2.f)
@@ -40,9 +40,9 @@ class TestNodePrioritySet(unittest.TestCase):
         self.assertFalse(self.node1 in my_collection)
 
     def test_first_in_first_out(self):
-        self.node1 = Node(Point(x=0, y=2), 2, 2)
-        self.node2 = Node(Point(x=1, y=1), 2, 2)
-        self.node3 = Node(Point(x=2, y=0), 2, 2)
+        self.node1 = NavNode(Point(x=0, y=2), 2, 2)
+        self.node2 = NavNode(Point(x=1, y=1), 2, 2)
+        self.node3 = NavNode(Point(x=2, y=0), 2, 2)
 
         my_collection = NodePrioritySet()
         my_collection.add(self.node1, 4)

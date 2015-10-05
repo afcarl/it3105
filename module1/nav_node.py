@@ -2,7 +2,7 @@ from point import Point
 from base_node import BaseNode
 
 
-class Node(BaseNode):
+class NavNode(BaseNode):
     """
     This is a Node implementation that is specific to the "find shortest path" problem
     """
@@ -10,11 +10,11 @@ class Node(BaseNode):
     board = None
 
     def __init__(self, position, g=None, h=None, parent=None):
-        super(Node, self).__init__(g=g, h=h, parent=parent)
+        super(NavNode, self).__init__(g=g, h=h, parent=parent)
         self.position = position
 
     def calculate_h(self):
-        self.h = self.position.euclidean_distance_to(self.board.goal) * Node.H_MULTIPLIER
+        self.h = self.position.euclidean_distance_to(self.board.goal) * NavNode.H_MULTIPLIER
 
     def generate_children(self):
         children = set()
@@ -26,7 +26,7 @@ class Node(BaseNode):
         }
         for position in candidate_positions:
             if self.board.is_tile_accessible(position):
-                child = Node(position)
+                child = NavNode(position)
                 children.add(child)
         return children
 
@@ -40,7 +40,7 @@ class Node(BaseNode):
         return hash(self.position.as_tuple())
 
     def get_arc_cost(self, other_node):
-        return Node.ARC_COST_MULTIPLIER
+        return NavNode.ARC_COST_MULTIPLIER
 
     def __str__(self):
         return "x:" + str(self.position.x) + \

@@ -2,7 +2,7 @@ import sys
 from ast import literal_eval
 from rect import Rect
 from point import Point
-from node import Node
+from nav_node import NavNode
 from board import Board
 import argparse
 import time
@@ -77,10 +77,10 @@ class Main:
         args = arg_parser.parse_args()
 
         if args.mode == 'bfs':
-            Node.H_MULTIPLIER = 0
+            NavNode.H_MULTIPLIER = 0
         elif args.mode == 'dfs':
-            Node.H_MULTIPLIER = 0
-            Node.ARC_COST_MULTIPLIER = 0
+            NavNode.H_MULTIPLIER = 0
+            NavNode.ARC_COST_MULTIPLIER = 0
 
         f = open(args.filename)
         lines = []
@@ -95,7 +95,7 @@ class Main:
 
         dimensions, start, goal, barriers = self.parse_lines(lines)
         self.board = Board(dimensions, start, goal, barriers)
-        Node.board = self.board
+        NavNode.board = self.board
 
         if not self.disable_gfx:
             from gfx import Gfx
@@ -128,7 +128,7 @@ class Main:
         return dimensions, start, goal, barriers
 
     def run(self):
-        start_node = Node(position=self.board.start, g=0)
+        start_node = NavNode(position=self.board.start, g=0)
 
         a_star = AStar(
             draw=self.gfx.draw if not self.disable_gfx else lambda _: 0,
