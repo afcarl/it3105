@@ -4,7 +4,6 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 import argparse
-from module2.csp_node import CspNode
 from ng_constraint_network import NgConstraintNetwork
 import time
 from module1.a_star import AStar
