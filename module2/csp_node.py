@@ -143,12 +143,14 @@ class CspNode(BaseNode):
             if len(domain) == 1:
                 neighbour_names = self.CONSTRAINT_NETWORK.get_neighbour_names(domain_name)
                 for neighbour_name in neighbour_names:
-                    for value in self.domains[neighbour_name]:
-                        domains_copy = deepcopy(self.domains)
-                        domains_copy[neighbour_name] = {value}
-                        child = CspNode(domains_copy)
-                        child.rerun(neighbour_name)
-                        children.add(child)
+                    if len(self.domains[neighbour_name]) > 1:
+                        for value in self.domains[neighbour_name]:
+                            domains_copy = deepcopy(self.domains)
+                            domains_copy[neighbour_name] = {value}
+                            child = CspNode(domains_copy)
+                            child.rerun(neighbour_name)
+                            children.add(child)
+                        break  # Only assume a value for ONE undecided vertex color
         return children
 
     def is_solution(self):
