@@ -58,11 +58,6 @@ class TestConstraint(unittest.TestCase):
         self.assertTrue(constraint.has_input_variable('x'))
         self.assertFalse(constraint.has_input_variable('u'))
 
-        self.assertEquals(
-            constraint.get_variables_except_focal_variable('y'),
-            ['x', 'z']
-        )
-
 
 class TestConstraintNetwork(unittest.TestCase):
     def test_constraint_network(self):

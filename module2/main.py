@@ -1,7 +1,7 @@
 from gfx import Gfx
 import argparse
-from node import CspNode
-from constraint_network import VertexColorVariable, VertexColorConstraintNetwork
+from csp_node import CspNode
+from vc_constraint_network import VertexColorVariable, VertexColorConstraintNetwork
 from module1.a_star import AStar
 from copy import deepcopy
 import time
