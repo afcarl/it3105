@@ -166,6 +166,8 @@ class Main(object):
         num_unsatisfied_constraints = end_node.get_num_unsatisfied_constraints()
         print 'number of unsatisfied constraints:', num_unsatisfied_constraints
 
+        num_uncolored_vertices = end_node.get_num_uncolored_vertices()
+        print 'number of uncolored vertices', num_uncolored_vertices
 
 if __name__ == '__main__':
     Main()

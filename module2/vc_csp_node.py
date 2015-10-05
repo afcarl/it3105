@@ -31,3 +31,10 @@ class VcCspNode(CspNode):
                             children.add(child)
                         return children  # Only assume a value for ONE undecided domain
         return children
+
+    def get_num_uncolored_vertices(self):
+        num_uncolored_vertices = 0
+        for domain in self.domains.itervalues():
+            if self.CONSTRAINT_NETWORK.get_color_id(domain) == -1:
+                num_uncolored_vertices += 1
+        return num_uncolored_vertices
