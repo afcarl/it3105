@@ -30,6 +30,7 @@ class AStar(object):
         # If the algorithm still hasn't found a solution after the max number of iterations,
         # then the algorithm will stop
         max_num_iterations = 50000000
+        current_node = None
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
