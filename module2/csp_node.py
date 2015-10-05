@@ -171,4 +171,3 @@ class CspNode(BaseNode):
             domain_size_sum += domain_len
 
         self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
-

@@ -85,5 +85,3 @@ class ConstraintNetwork(object):
 
         self.variable_constraints_cache[hash_key] = constraints
         return constraints
-
-
