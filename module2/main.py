@@ -161,7 +161,10 @@ class Main(object):
         start_node.domain_filtering()
 
         print 'running'
-        self.a_star.run(start_node=start_node)
+        success, end_node = self.a_star.run(start_node=start_node)
+
+        num_unsatisfied_constraints = end_node.get_num_unsatisfied_constraints()
+        print 'number of unsatisfied constraints:', num_unsatisfied_constraints
 
 
 if __name__ == '__main__':

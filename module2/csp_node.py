@@ -171,3 +171,6 @@ class CspNode(BaseNode):
             domain_size_sum += domain_len
 
         self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
+
+    def get_num_unsatisfied_constraints(self):
+        return self.CONSTRAINT_NETWORK.get_num_unsatisfied_constraints(domains=self.domains)

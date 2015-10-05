@@ -33,7 +33,7 @@ class AStar(object):
         for num_iterations in range(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
-                return False
+                return False, current_node
             current_node = open_list.pop()
             closed_list[current_node] = current_node
             if not self.disable_gfx and num_iterations % self.draw_every == 0:
@@ -48,7 +48,7 @@ class AStar(object):
                     print current_node
                     for ancestor in ancestors:
                         print ancestor
-                return current_node
+                return True, current_node
             children = current_node.generate_children()
             for child in children:
                 previously_generated = False
@@ -66,4 +66,4 @@ class AStar(object):
                     attach_and_eval(current_node, child)
 
         print 'Failed to find a solution within the max number of iterations,', max_num_iterations
-        return False
+        return False, current_node

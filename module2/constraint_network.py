@@ -85,3 +85,16 @@ class ConstraintNetwork(object):
 
         self.variable_constraints_cache[hash_key] = constraints
         return constraints
+
+    def get_num_unsatisfied_constraints(self, domains):
+        num_unsatisfied_constraints = 0
+        for constraint in self.constraints.itervalues():
+            variables = {}
+            for variable in constraint.ordered_variables:
+                variables[variable] = None
+                for value in domains[variable]:
+                    variables[variable] = value
+                    break
+            if not constraint.is_satisfied(*variables.itervalues()):
+                num_unsatisfied_constraints += 1
+        return num_unsatisfied_constraints
