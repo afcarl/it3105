@@ -6,7 +6,6 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from module1.base_node import BaseNode
 import itertools
 from collections import deque
-from copy import deepcopy
 
 
 class TodoRevise:
@@ -116,27 +115,3 @@ class CspNode(BaseNode):
             if len(domain) == 0:
                 return True
         return False
-
-    def generate_children(self):
-        children = set()
-        if self.is_dead_end():
-            return children
-
-        for domain_name, domain in self.domains.iteritems():
-            if len(domain) == 1:
-                neighbour_names = self.CONSTRAINT_NETWORK.get_neighbour_names(domain_name)
-                sorted_neighbour_names = sorted(
-                    neighbour_names,
-                    key=lambda name: len(self.domains[name])
-                )
-
-                for neighbour_name in sorted_neighbour_names:
-                    if len(self.domains[neighbour_name]) > 1:
-                        for value in self.domains[neighbour_name]:
-                            domains_copy = deepcopy(self.domains)
-                            domains_copy[neighbour_name] = {value}
-                            child = self.__class__(domains_copy)
-                            child.rerun(neighbour_name)
-                            children.add(child)
-                        return children  # Only assume a value for ONE undecided domain
-        return children

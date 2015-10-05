@@ -103,7 +103,7 @@ class NgConstraintNetwork(ConstraintNetwork):
 
     @staticmethod
     def get_possible_combinations(size, segments, start_index_domains):
-        possible_combinations = []
+        possible_combinations = set()
         for start_indexes in itertools.product(*start_index_domains):
             values = [0] * size
             is_valid_combination = True
@@ -116,5 +116,12 @@ class NgConstraintNetwork(ConstraintNetwork):
                     values[start_index + j] = 1
 
             if is_valid_combination:
-                possible_combinations.append(tuple(values))
+                possible_combinations.add(tuple(values))
         return possible_combinations
+
+    @staticmethod
+    def get_values(domain):
+        if len(domain) == 1:
+            for values in domain:
+                return values
+        return None

@@ -7,6 +7,9 @@ import argparse
 from module2.csp_node import CspNode
 from ng_constraint_network import NgConstraintNetwork
 import time
+from module1.a_star import AStar
+from ng_csp_node import NgCspNode
+from copy import deepcopy
 
 
 class Main(object):
@@ -95,17 +98,15 @@ class Main(object):
         )
 
         if not args.disable_gfx:
-            pass
-            #from gfx import Gfx
-            #self.gfx = Gfx(fps=args.fps)
-        """
+            from gfx import Gfx
+            self.gfx = Gfx(grid_width=num_cols, grid_height=num_rows, fps=args.fps)
+
         self.a_star = AStar(
             draw=self.gfx.draw if not args.disable_gfx else lambda _: 0,
             disable_gfx=args.disable_gfx,
             draw_every=args.draw_every,
             print_path=args.print_path
         )
-        """
 
         if args.print_execution_time:
             self.start_time = time.time()
@@ -124,7 +125,8 @@ class Main(object):
         num_cols, num_rows = map(int, lines[0].split(' '))
 
         row_segments = []
-        for i in range(1, num_rows + 1):
+        # Read this backwards because we want to define y = 0 as the top, not the bottom
+        for i in reversed(range(1, num_rows + 1)):
             segments = map(int, lines[i].split(' '))
             row_segments.append(segments)
 
@@ -136,27 +138,18 @@ class Main(object):
         return num_cols, num_rows, row_segments, col_segments
 
     def run(self):
-        # TODO
-        pass
-
-        """
-        CspNode.set_constraint_network(self.constraint_network)
-        CspNode.set_constraints(self.constraint_network.constraints)
-        start_node = CspNode(
+        NgCspNode.set_constraint_network(self.constraint_network)
+        NgCspNode.set_constraints(self.constraint_network.constraints)
+        start_node = NgCspNode(
             domains=deepcopy(self.constraint_network.domains),
             g=0
         )
-        # a little optimization: pick a color for the first vertex
-        first_domain = start_node.domains.itervalues().next()
-        while len(first_domain) > 1:
-            first_domain.pop()
 
         start_node.initialize_csp()
         start_node.domain_filtering()
 
         print 'running'
         self.a_star.run(start_node=start_node)
-        """
 
 
 if __name__ == '__main__':

@@ -1,16 +1,23 @@
-from csp_node import CspNode
+import sys
+from os import path
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from module2.csp_node import CspNode
 from copy import deepcopy
 
 
-class VcCspNode(CspNode):
+class NgCspNode(CspNode):
     def __init__(self, domains, g=None, h=None, parent=None):
         """
         domains: dict
         """
-        super(VcCspNode, self).__init__(domains=domains, g=g, h=h, parent=parent)
-        self.hash_cache = None
+        super(NgCspNode, self).__init__(domains=domains, g=g, h=h, parent=parent)
+        self.hash_cache = None  # TODO: check if this is used
 
     def __eq__(self, other_node):
+        # TODO: check if this works
+        # TODO: consider moving this to CspNode
         for domain_name, domain in self.domains.iteritems():
             other_domain = other_node.domains[domain_name]
             if domain != other_domain:
@@ -18,6 +25,8 @@ class VcCspNode(CspNode):
         return True
 
     def __hash__(self):
+        # TODO: check if this works
+        # TODO: consider moving this to CspNode
         if self.hash_cache is not None:
             return self.hash_cache
         frozen_items = [frozenset(domain) for domain in self.domains.itervalues()]
@@ -26,12 +35,16 @@ class VcCspNode(CspNode):
         return hash_result
 
     def is_solution(self):
+        # TODO: check if this works
+        # TODO: consider moving this to CspNode
         for domain in self.domains.itervalues():
             if len(domain) != 1:
                 return False
         return True
 
     def calculate_h(self):
+        # TODO: check if this works
+        # TODO: consider moving this to CspNode
         domain_size_sum = 0
 
         for domain in self.domains.itervalues():
@@ -66,3 +79,4 @@ class VcCspNode(CspNode):
                             children.add(child)
                         return children  # Only assume a value for ONE undecided domain
         return children
+
