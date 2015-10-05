@@ -8,7 +8,7 @@ from module2.csp_node import CspNode
 from ng_constraint_network import NgConstraintNetwork
 import time
 from module1.a_star import AStar
-from ng_csp_node import NgCspNode
+from module2.csp_node import CspNode
 from copy import deepcopy
 
 
@@ -73,7 +73,18 @@ class Main(object):
             required=False,
             default=False
         )
+        arg_parser.add_argument(
+            '--sleep-afterwards',
+            nargs='?',
+            dest='sleep_afterwards',
+            help='At the end of the run, sleep for a couple of seconds. This gives you time to'
+                 ' take a screenshot of the solution, for example',
+            const=True,
+            required=False,
+            default=False
+        )
         args = arg_parser.parse_args()
+        self.sleep_afterwards = args.sleep_afterwards
 
         if args.mode == 'bfs':
             CspNode.H_MULTIPLIER = 0
@@ -138,9 +149,9 @@ class Main(object):
         return num_cols, num_rows, row_segments, col_segments
 
     def run(self):
-        NgCspNode.set_constraint_network(self.constraint_network)
-        NgCspNode.set_constraints(self.constraint_network.constraints)
-        start_node = NgCspNode(
+        CspNode.set_constraint_network(self.constraint_network)
+        CspNode.set_constraints(self.constraint_network.constraints)
+        start_node = CspNode(
             domains=deepcopy(self.constraint_network.domains),
             g=0
         )
@@ -150,7 +161,8 @@ class Main(object):
 
         print 'running'
         self.a_star.run(start_node=start_node)
-        time.sleep(5)
+        if self.sleep_afterwards:
+            time.sleep(5)
 
 if __name__ == '__main__':
     Main()
