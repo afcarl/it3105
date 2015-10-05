@@ -150,7 +150,7 @@ class CspNode(BaseNode):
                             child = CspNode(domains_copy)
                             child.rerun(neighbour_name)
                             children.add(child)
-                        break  # Only assume a value for ONE undecided vertex color
+                        return children  # Only assume a value for ONE undecided vertex color
         return children
 
     def is_solution(self):
