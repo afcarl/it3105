@@ -1,6 +1,5 @@
 import sys
 from os import path
-# from math import tanh
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -131,7 +130,6 @@ class CspNode(BaseNode):
                 return
             domain_size_sum += domain_len
 
-        #self.h = tanh(domain_size_sum / 100000.0) * self.H_MULTIPLIER  # this should be admissible
         self.h = domain_size_sum * self.H_MULTIPLIER  # rough estimate, but not admissible
 
     def generate_children(self):

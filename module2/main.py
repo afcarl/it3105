@@ -146,8 +146,6 @@ class Main(object):
         return num_vertices, num_edges, vertices, edges
 
     def run(self):
-        # TODO
-
         CspNode.set_constraint_network(self.constraint_network)
         CspNode.set_constraints(self.constraint_network.constraints)
         start_node = CspNode(
