@@ -1,10 +1,19 @@
 class Constraint(object):
-    """
-    name: string
-    variables: list or tuple
-    expression: string
-    """
+    BLACKLISTED_SUBSTRINGS_IN_EVAL = [
+        'rm',
+        'rf',
+        'import',
+        '__',
+        'lambda',
+        'def'
+    ]
+
     def __init__(self, name, variables, expression):
+        """
+        name: string
+        variables: list or tuple
+        expression: string
+        """
         self.name = name
         self.ordered_variables = list(variables)
         self.variables = set(variables)
@@ -14,10 +23,10 @@ class Constraint(object):
     def __repr__(self):
         return self.expression
 
-    """
-    values: dict(variable: value)
-    """
     def is_satisfied(self, *values, **value_map):
+        """
+        values: dict(variable: value)
+        """
         return self.function(*values, **value_map)
 
     def has_input_variable(self, variable):
@@ -25,8 +34,9 @@ class Constraint(object):
 
     @staticmethod
     def make_function(variables, expression, environment=globals()):
-        # http://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
-        # TODO: make this less dangerous by checking the expression before creating the function
+        for substring in Constraint.BLACKLISTED_SUBSTRINGS_IN_EVAL:
+            if substring in expression:
+                raise Exception('Attempted to run blacklisted command')
         return eval("(lambda " + ', '.join(variables) + ": " + expression + ")", environment)
 
 
@@ -42,11 +52,13 @@ class Variable(object):
 class ConstraintNetwork(object):
     """
     Superclass
-
-    constraints: dict {constraint_name: constraint_instance}
-    domains: dict {domain_name: set(values)}
     """
     def __init__(self, constraints, domains):
+        """
+        :param constraints: dict {constraint_name: constraint_instance}
+        :param domains: dict {domain_name: set(values)}
+        :return:
+        """
         self.constraints = constraints
         self.domains = domains
         self.variable_constraints_cache = {}

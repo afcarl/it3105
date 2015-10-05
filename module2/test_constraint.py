@@ -58,6 +58,13 @@ class TestConstraint(unittest.TestCase):
         self.assertTrue(constraint.has_input_variable('x'))
         self.assertFalse(constraint.has_input_variable('u'))
 
+        with self.assertRaises(Exception):
+            Constraint(
+                name="c1",
+                variables=['x', 'y', 'z'],
+                expression='(x + y > 2 * z); import dangerous_function'
+            )
+
 
 class TestConstraintNetwork(unittest.TestCase):
     def test_constraint_network(self):

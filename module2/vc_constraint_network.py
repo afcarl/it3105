@@ -19,7 +19,7 @@ class VertexColorConstraintNetwork(ConstraintNetwork):
     initial_domain: list of numbers that shall be put into each domain initially
     """
     def __init__(self, vertices, edges, initial_domain):
-        self.edges = edges  # TODO: dunno if needed
+        self.edges = edges
 
         self.normalize_vertex_positions(vertices)
         self.vertices = {}
