@@ -61,22 +61,19 @@ class NgCspNode(CspNode):
         if self.is_dead_end():
             return children
 
-        for domain_name, domain in self.domains.iteritems():
-            if len(domain) == 1:
-                neighbour_names = self.CONSTRAINT_NETWORK.get_neighbour_names(domain_name)
-                sorted_neighbour_names = sorted(
-                    neighbour_names,
-                    key=lambda name: len(self.domains[name])
-                )
+        domain_names_sorted_by_size = sorted(
+            self.domains,
+            key=lambda name: len(self.domains[name])
+        )
 
-                for neighbour_name in sorted_neighbour_names:
-                    if len(self.domains[neighbour_name]) > 1:
-                        for value in self.domains[neighbour_name]:
-                            domains_copy = deepcopy(self.domains)
-                            domains_copy[neighbour_name] = {value}
-                            child = self.__class__(domains_copy)
-                            child.rerun(neighbour_name)
-                            children.add(child)
-                        return children  # Only assume a value for ONE undecided domain
+        for domain_name in domain_names_sorted_by_size:
+            if len(self.domains[domain_name]) > 1:
+                for value in self.domains[domain_name]:
+                    domains_copy = deepcopy(self.domains)
+                    domains_copy[domain_name] = {value}
+                    child = self.__class__(domains_copy)
+                    child.rerun(domain_name)
+                    children.add(child)
+                return children  # Only assume a value for ONE undecided domain
         return children
 

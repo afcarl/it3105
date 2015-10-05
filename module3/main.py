@@ -150,7 +150,7 @@ class Main(object):
 
         print 'running'
         self.a_star.run(start_node=start_node)
-
+        time.sleep(5)
 
 if __name__ == '__main__':
     Main()
