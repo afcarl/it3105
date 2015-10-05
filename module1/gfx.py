@@ -1,6 +1,6 @@
 import sys, pygame
 
-pygame.init()
+pygame.display.init()
 
 
 class Gfx(object):
