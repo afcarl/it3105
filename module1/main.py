@@ -4,7 +4,6 @@ from rect import Rect
 from point import Point
 from node import Node
 from board import Board
-from gfx import Gfx
 import argparse
 import time
 from a_star import AStar
@@ -99,6 +98,7 @@ class Main:
         Node.board = self.board
 
         if not self.disable_gfx:
+            from gfx import Gfx
             self.gfx = Gfx(board=self.board, fps=args.fps)
 
         if self.print_execution_time:

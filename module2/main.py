@@ -1,4 +1,3 @@
-from gfx import Gfx
 import argparse
 from csp_node import CspNode
 from vc_constraint_network import VertexColorVariable, VertexColorConstraintNetwork
@@ -101,6 +100,7 @@ class Main(object):
         )
 
         if not args.disable_gfx:
+            from gfx import Gfx
             self.gfx = Gfx(fps=args.fps)
 
         self.a_star = AStar(
