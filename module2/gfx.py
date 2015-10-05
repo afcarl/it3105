@@ -1,8 +1,6 @@
 import sys, pygame
 
-pygame.init()
-
-# TODO: make sure the csp can handle up to 8 colors
+pygame.display.init()
 
 
 class Gfx(object):
