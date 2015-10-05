@@ -31,6 +31,7 @@ class Main(object):
             '--num-colors',
             dest='num_colors',
             type=int,
+            choices=[2, 3, 4, 5, 6, 7, 8],
             required=True,
         )
         arg_parser.add_argument(
@@ -163,6 +164,7 @@ class Main(object):
 
         print 'running'
         self.a_star.run(start_node=start_node)
+
 
 if __name__ == '__main__':
     Main()
