@@ -56,15 +56,7 @@ class Main(object):
             required=False,
             default=False
         )
-        arg_parser.add_argument(
-            '--print-path',
-            nargs='?',
-            dest='print_path',
-            help='If a solution is found, print the backtracked nodes that led to the solution',
-            const=True,
-            required=False,
-            default=False
-        )
+
         arg_parser.add_argument(
             '--print-execution-time',
             nargs='?',
@@ -107,7 +99,7 @@ class Main(object):
             draw=self.gfx.draw if not args.disable_gfx else lambda _: 0,
             disable_gfx=args.disable_gfx,
             draw_every=args.draw_every,
-            print_path=args.print_path
+            print_path=False
         )
 
         if args.print_execution_time:
