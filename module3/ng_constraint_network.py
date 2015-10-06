@@ -7,25 +7,7 @@ from module2.constraint_network import Variable, ConstraintNetwork, Constraint
 import itertools
 
 
-class VertexColorVariable(Variable):
-    """
-    Problem-specific (graph coloring) class
-    """
-
-    def __init__(self, i, x, y):
-        super(VertexColorVariable, self).__init__(name=i, domain=None)
-        self.x = x
-        self.y = y
-
-
 class NgConstraintNetwork(ConstraintNetwork):
-    """
-    Problem-specific class
-    vertices: list of VertexColorVariable instances
-    edges: list of tuples
-    initial_domain: list of numbers that shall be put into each domain initially
-    """
-
     def __init__(self, num_cols, num_rows, row_segments, col_segments):
         domains = {}
 
