@@ -12,7 +12,7 @@ class NgConstraintNetwork(ConstraintNetwork):
         domains = {}
 
         # calculate and add column domains
-        for col_index in range(len(col_segments)):
+        for col_index in xrange(len(col_segments)):
             start_index_domains = NgConstraintNetwork.get_start_index_domains(
                 num_rows,
                 col_segments[col_index]
@@ -27,7 +27,7 @@ class NgConstraintNetwork(ConstraintNetwork):
             domains[col_key] = possible_combinations
 
         # calculate and add row domains
-        for row_index in range(len(row_segments)):
+        for row_index in xrange(len(row_segments)):
             start_index_domains = NgConstraintNetwork.get_start_index_domains(
                 num_cols,
                 row_segments[row_index]
@@ -43,8 +43,8 @@ class NgConstraintNetwork(ConstraintNetwork):
 
         # Calculate constraints. One for each cell
         constraints = {}
-        for i in range(num_rows):
-            for j in range(num_cols):
+        for i in xrange(num_rows):
+            for j in xrange(num_cols):
                 constraint_variables = ('r' + str(i), 'c' + str(j))
                 constraint_expression = "{}[{}] == {}[{}]".format(
                     constraint_variables[0],
@@ -66,12 +66,12 @@ class NgConstraintNetwork(ConstraintNetwork):
         num_segments = len(segments)
         min_start_indexes = []
         min_start_index = 0
-        for i in range(len(segments)):
+        for i in xrange(len(segments)):
             min_start_indexes.append(min_start_index)
             min_start_index += segments[i] + 1
 
         start_index_domains = []
-        for i in range(num_segments):
+        for i in xrange(num_segments):
             min_start_index = min_start_indexes[i]
             domain = []
             num_remaining_segments = len(min_start_indexes) - i - 1
@@ -89,12 +89,12 @@ class NgConstraintNetwork(ConstraintNetwork):
         for start_indexes in itertools.product(*start_index_domains):
             values = [0] * size
             is_valid_combination = True
-            for i in range(len(start_indexes)):
+            for i in xrange(len(start_indexes)):
                 start_index = start_indexes[i]
                 if i > 0 and start_index <= start_indexes[i - 1] + segments[i - 1]:
                     is_valid_combination = False
                 segment_size = segments[i]
-                for j in range(segment_size):
+                for j in xrange(segment_size):
                     values[start_index + j] = 1
 
             if is_valid_combination:

@@ -38,7 +38,7 @@ class Gfx(object):
                 values = node.CONSTRAINT_NETWORK.get_values(domain)
                 if values is not None:
                     i = int(variable_name[1:])
-                    for j in range(len(values)):
+                    for j in xrange(len(values)):
                         column_value = values[j]
                         color = self.GREY if column_value == 1 else self.WHITE
                         self.draw_tile(j, i, color)

@@ -6,9 +6,9 @@ class Board:
 
     def __init__(self, dimensions, start, goal, barriers):
         self.tiles = []
-        for i in range(dimensions.height):
+        for i in xrange(dimensions.height):
             self.tiles.append([])
-            for j in range(dimensions.width):
+            for j in xrange(dimensions.width):
                 self.tiles[i].append(0)
 
         self.rect = dimensions

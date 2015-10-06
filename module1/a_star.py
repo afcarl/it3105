@@ -42,7 +42,7 @@ class AStar(object):
         max_num_iterations = 50000000
         current_node = None
         num_nodes_popped = 0
-        for num_iterations in range(max_num_iterations):
+        for num_iterations in xrange(max_num_iterations):
             if open_list.is_empty():
                 print 'Failed to find a solution'
                 print_stats(current_node, closed_list, open_list, num_nodes_popped, self.print_path)
