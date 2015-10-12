@@ -12,7 +12,7 @@ class Gfx(object):
     size = width, height = 540, 540
     WHITE = 255, 255, 255
     COLORS = {
-        None: (50, 50, 50),
+        0: (50, 50, 50),
         2: (195, 197, 2),
         4: (1, 138, 0),
         8: (2, 195, 235),
@@ -66,14 +66,14 @@ class Gfx(object):
             )
             self.screen.blit(label, label_position)
 
-    def draw_rows(self, board):
-        for i in xrange(len(board)):
-            for j in xrange(len(board[i])):
-                number = board[i][j]
+    def draw_rows(self, board_values):
+        for i in xrange(len(board_values)):
+            for j in xrange(len(board_values[i])):
+                number = board_values[i][j]
                 color = self.get_color(number)
                 self.draw_tile(j, i, color, number)
 
-    def draw(self, board):
+    def draw(self, board_values):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -89,6 +89,6 @@ class Gfx(object):
 
         self.screen.fill(self.WHITE)
 
-        self.draw_rows(board)
+        self.draw_rows(board_values)
 
         pygame.display.flip()
