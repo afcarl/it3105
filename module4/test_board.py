@@ -2,7 +2,7 @@ import unittest
 from board import Board
 
 
-class TestMain(unittest.TestCase):
+class TestBoard(unittest.TestCase):
     def setUp(self):
         self.board = Board(size=4)
 

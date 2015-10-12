@@ -3,7 +3,7 @@ from time import sleep
 from gfx import Gfx
 
 
-class TestMain(unittest.TestCase):
+class TestGfx(unittest.TestCase):
     def test_gfx(self):
         board = [
             [None, 8, 16, 2048],
