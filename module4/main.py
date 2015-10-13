@@ -16,6 +16,7 @@ class Main(object):
             moves = self.board.get_possible_moves()
             if len(moves) == 0:
                 print 'game over'
+                print self.board
                 break
 
             direction = random.choice(moves)

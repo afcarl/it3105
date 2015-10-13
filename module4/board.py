@@ -23,7 +23,7 @@ class Board(object):
         moves = []
         if self.can_move_up():
             moves.append(self.UP)
-        if self.can_move_right:
+        if self.can_move_right():
             moves.append(self.RIGHT)
         if self.can_move_down():
             moves.append(self.DOWN)
@@ -58,6 +58,8 @@ class Board(object):
         for other_row_index in range(row_index - 1, -1, -1):
             if self.board_values[other_row_index][column_index] in numbers_to_check_for:
                 return True
+            else:
+                return False
         return False
 
     def can_move_right(self):
@@ -73,6 +75,8 @@ class Board(object):
         for other_column_index in range(column_index + 1, self.size):
             if self.board_values[row_index][other_column_index] in numbers_to_check_for:
                 return True
+            else:
+                return False
         return False
 
     def can_move_down(self):
@@ -88,6 +92,8 @@ class Board(object):
         for other_row_index in range(row_index + 1, self.size):
             if self.board_values[other_row_index][column_index] in numbers_to_check_for:
                 return True
+            else:
+                return False
         return False
 
     def can_move_left(self):
@@ -103,6 +109,8 @@ class Board(object):
         for other_column_index in reversed(xrange(column_index)):
             if self.board_values[row_index][other_column_index] in numbers_to_check_for:
                 return True
+            else:
+                return False
         return False
 
     def move(self, direction):

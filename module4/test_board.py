@@ -58,6 +58,34 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(self.board.can_move(Board.DOWN))
         self.assertTrue(self.board.can_move(Board.LEFT))
 
+    def test_can_move_full_board_1(self):
+        board_values = [
+            [8, 4, 64, 256],
+            [2, 16, 8, 32],
+            [4, 8, 16, 64],
+            [8, 4, 32, 128]
+        ]
+        self.board.set_board_values(board_values)
+        self.assertFalse(self.board.can_move(Board.UP))
+        self.assertFalse(self.board.can_move(Board.RIGHT))
+        self.assertFalse(self.board.can_move(Board.DOWN))
+        self.assertFalse(self.board.can_move(Board.LEFT))
+
+    def test_can_move_full_board_2(self):
+        board_values = [
+            [4, 16, 4, 2],
+            [32, 4, 16, 4],
+            [4, 64, 128, 16],
+            [2, 8, 16, 4]
+        ]
+        self.board.set_board_values(board_values)
+        self.assertFalse(self.board.can_move(Board.UP))
+        self.assertFalse(self.board.can_move(Board.RIGHT))
+        self.assertFalse(self.board.can_move_right())
+        self.assertFalse(self.board.can_move(Board.DOWN))
+        self.assertFalse(self.board.can_move(Board.LEFT))
+        self.assertEqual(self.board.get_possible_moves(), [])
+
     def test_do_move_right_1(self):
         board_values = [
             [0, 4, 4, 2],
@@ -167,7 +195,6 @@ class TestBoard(unittest.TestCase):
                     num_twos += 1
 
         self.assertEqual(num_fours + num_twos, 1)
-        print self.board
 
 
 if __name__ == '__main__':
