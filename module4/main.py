@@ -7,7 +7,7 @@ from node import Node
 class Main(object):
     def __init__(self):
         size = 4
-        self.gfx = Gfx(grid_width=size, grid_height=size, fps=8.0)
+        self.gfx = Gfx(grid_width=size, grid_height=size, fps=30.0)
         board = Board(size=size)
         board.place_new_value_randomly()
         board.place_new_value_randomly()
