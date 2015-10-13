@@ -153,6 +153,22 @@ class TestBoard(unittest.TestCase):
             ]
         )
 
+    def test_place_new_value_randomly(self):
+        self.board.place_new_value_randomly()
+
+        num_twos = 0
+        num_fours = 0
+
+        for row in self.board.board_values:
+            for value in row:
+                if value == 4:
+                    num_fours += 1
+                elif value == 2:
+                    num_twos += 1
+
+        self.assertEqual(num_fours + num_twos, 1)
+        print self.board
+
 
 if __name__ == '__main__':
     unittest.main()

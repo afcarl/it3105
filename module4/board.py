@@ -1,3 +1,6 @@
+import random
+
+
 class Board(object):
     UP = 0
     RIGHT = 1
@@ -15,6 +18,18 @@ class Board(object):
 
     def set_board_values(self, board_values):
         self.board_values = board_values
+
+    def get_possible_moves(self):
+        moves = []
+        if self.can_move_up():
+            moves.append(self.UP)
+        if self.can_move_right:
+            moves.append(self.RIGHT)
+        if self.can_move_down():
+            moves.append(self.DOWN)
+        if self.can_move_left():
+            moves.append(self.LEFT)
+        return moves
 
     def can_move(self, direction):
         """
@@ -203,3 +218,22 @@ class Board(object):
             # move
             self.board_values[row_index][column_index] = 0
             self.board_values[row_index][potential_new_column_index] = value
+
+    def place_new_value_randomly(self):
+        empty_positions = []
+        for row_index in xrange(self.size):
+            for column_index in range(self.size):
+                if self.board_values[row_index][column_index] == 0:
+                    empty_positions.append((row_index, column_index))
+        if len(empty_positions) > 0:
+            row_index, column_index = random.choice(empty_positions)
+            if random.random() >= 0.9:
+                self.board_values[row_index][column_index] = 4
+            else:
+                self.board_values[row_index][column_index] = 2
+
+    def __repr__(self):
+        result = ''
+        for row in self.board_values:
+            result += str(row) + "\n"
+        return result
