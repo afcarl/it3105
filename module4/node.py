@@ -1,17 +1,13 @@
 from board import Board
 from copy import deepcopy
-from math import log
-
-
-def log2(number):
-    return log(number, 2) if number > 0 else 0
+from game import Game
 
 
 class Node(object):
     cell_weights = [
-        [10, 8, 7, 6.5],
-        [.5, .7, 1, 3],
-        [-.5, -1.5, -1.8, -2],
+        [10.0, 8.0, 7.0, 6.5],
+        [0.5, 0.7, 1.0, 3.0],
+        [-0.5, -1.5, -1.8, -2],
         [-3.8, -3.7, -3.5, -3]
     ]
 
@@ -47,13 +43,32 @@ class Node(object):
         return self.cell_weights[row_index][column_index]
 
     def get_heuristic(self):
+        """
         heuristic = 0
+        num_empty_cells = 0
         for row_index in xrange(self.board.size):
             for column_index in xrange(self.board.size):
                 cell_value = self.board.board_values[row_index][column_index]
-                cell_weight = self.get_cell_weight(row_index, column_index)
-                heuristic += (cell_weight * cell_value) ** 2
+                if cell_value == 0:
+                    num_empty_cells += 1
+                else:
+                    cell_weight = self.get_cell_weight(row_index, column_index)
+                    heuristic += cell_weight * cell_value
 
-        
+        heuristic += num_empty_cells ** 2
 
-        return heuristic
+        child_factor = 1.0
+
+        children = self.generate_children()
+        if len(children) == 0:
+            return 0
+        """
+
+        child_play_score = 0
+        for x in xrange(20):
+            board_copy = deepcopy(self.board)
+            node_copy = Node(board_copy)
+            child_play_score += Game.play_game(start_node=node_copy, play_randomly=True)
+        return child_play_score
+
+        #return heuristic * child_factor

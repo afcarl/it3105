@@ -1,7 +1,7 @@
 from gfx import Gfx
 from board import Board
-import random
 from node import Node
+from game import Game
 
 
 class Main(object):
@@ -13,22 +13,7 @@ class Main(object):
         board.place_new_value_randomly()
 
         start_node = Node(board=board)
-        current_node = start_node
-        for x in xrange(10000):
-            self.gfx.draw(current_node.board.board_values)
+        print Game.play_game(start_node=start_node, gfx=self.gfx, play_randomly=False)
 
-            children = current_node.generate_children()
-            if len(children) == 0:
-                print 'game over'
-                print current_node.board
-                break
-
-            sorted_children = sorted(
-                children,
-                key=lambda child: child.get_heuristic(),
-                reverse=True
-            )
-            current_node = sorted_children[0]
-            current_node.board.place_new_value_randomly()
-
-Main()
+if __name__ == '__main__':
+    Main()
