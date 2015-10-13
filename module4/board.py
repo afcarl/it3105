@@ -55,12 +55,7 @@ class Board(object):
 
     def can_move_tile_up(self, row_index, column_index):
         numbers_to_check_for = (0, self.board_values[row_index][column_index])
-        for other_row_index in range(row_index - 1, -1, -1):
-            if self.board_values[other_row_index][column_index] in numbers_to_check_for:
-                return True
-            else:
-                return False
-        return False
+        return self.board_values[row_index - 1][column_index] in numbers_to_check_for
 
     def can_move_right(self):
         for row_index in xrange(self.size):
@@ -72,12 +67,7 @@ class Board(object):
 
     def can_move_tile_right(self, row_index, column_index):
         numbers_to_check_for = (0, self.board_values[row_index][column_index])
-        for other_column_index in range(column_index + 1, self.size):
-            if self.board_values[row_index][other_column_index] in numbers_to_check_for:
-                return True
-            else:
-                return False
-        return False
+        return self.board_values[row_index][column_index + 1] in numbers_to_check_for
 
     def can_move_down(self):
         for row_index in range(self.size - 1):
@@ -89,12 +79,7 @@ class Board(object):
 
     def can_move_tile_down(self, row_index, column_index):
         numbers_to_check_for = (0, self.board_values[row_index][column_index])
-        for other_row_index in range(row_index + 1, self.size):
-            if self.board_values[other_row_index][column_index] in numbers_to_check_for:
-                return True
-            else:
-                return False
-        return False
+        return self.board_values[row_index + 1][column_index] in numbers_to_check_for
 
     def can_move_left(self):
         for row_index in xrange(self.size):
@@ -106,12 +91,7 @@ class Board(object):
 
     def can_move_tile_left(self, row_index, column_index):
         numbers_to_check_for = (0, self.board_values[row_index][column_index])
-        for other_column_index in reversed(xrange(column_index)):
-            if self.board_values[row_index][other_column_index] in numbers_to_check_for:
-                return True
-            else:
-                return False
-        return False
+        return self.board_values[row_index][column_index - 1] in numbers_to_check_for
 
     def move(self, direction):
         """
