@@ -4,7 +4,7 @@ from board import Board
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.board = Board(size=4)
+        self.board = Board()
 
     def test_can_move_1(self):
         board_values = [

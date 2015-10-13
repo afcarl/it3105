@@ -1,26 +1,34 @@
 from gfx import Gfx
 from board import Board
 import random
+from node import Node
 
 
 class Main(object):
     def __init__(self):
         size = 4
         self.gfx = Gfx(grid_width=size, grid_height=size, fps=8.0)
-        self.board = Board(size=size)
-        self.board.place_new_value_randomly()
-        self.board.place_new_value_randomly()
+        board = Board(size=size)
+        board.place_new_value_randomly()
+        board.place_new_value_randomly()
 
+        start_node = Node(board=board)
+        current_node = start_node
         for x in xrange(10000):
-            self.gfx.draw(self.board.board_values)
-            moves = self.board.get_possible_moves()
-            if len(moves) == 0:
+            self.gfx.draw(current_node.board.board_values)
+
+            children = current_node.generate_children()
+            if len(children) == 0:
                 print 'game over'
-                print self.board
+                print current_node.board
                 break
 
-            direction = random.choice(moves)
-            self.board.move(direction)
-            self.board.place_new_value_randomly()
+            sorted_children = sorted(
+                children,
+                key=lambda child: child.get_heuristic(),
+                reverse=True
+            )
+            current_node = sorted_children[0]
+            current_node.board.place_new_value_randomly()
 
 Main()
