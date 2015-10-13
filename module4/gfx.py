@@ -57,7 +57,7 @@ class Gfx(object):
         pygame.draw.rect(self.screen, color, rect)
 
         # draw number on tile
-        if number is not None:
+        if number:
             number_str = str(number)
             label = self.font.render(str(number), 1, self.WHITE)
             label_position = (
