@@ -220,6 +220,14 @@ class Board(object):
             else:
                 self.board_values[row_index][column_index] = 2
 
+    def get_num_empty_tiles(self):
+        num_empty_tiles = 0
+        for row in self.board_values:
+            for cell in row:
+                if cell == 0:
+                    num_empty_tiles += 1
+        return num_empty_tiles
+
     def __repr__(self):
         result = ''
         for row in self.board_values:

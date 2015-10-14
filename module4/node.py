@@ -65,7 +65,8 @@ class Node(object):
         """
 
         child_play_score = 0
-        for x in xrange(20):
+
+        for x in xrange(100):
             board_copy = deepcopy(self.board)
             node_copy = Node(board_copy)
             child_play_score += Game.play_game(start_node=node_copy, play_randomly=True)
