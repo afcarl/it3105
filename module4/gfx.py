@@ -46,7 +46,7 @@ class Gfx(object):
             return self.COLORS[number]
         return self.COLORS["other"]
 
-    def draw_tile(self, x, y, color, number=None):
+    def draw_tile(self, x, y, color, number):
         # draw colored tile
         rect = pygame.Rect(
             x * self.GU_X + 1,
@@ -57,7 +57,7 @@ class Gfx(object):
         pygame.draw.rect(self.screen, color, rect)
 
         # draw number on tile
-        if number is not None:
+        if number != 0:
             number_str = str(number)
             label = self.font.render(str(number), 1, self.WHITE)
             label_position = (
