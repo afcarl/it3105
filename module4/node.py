@@ -69,7 +69,7 @@ class Node(object):
         for x in xrange(100):
             board_copy = deepcopy(self.board)
             node_copy = Node(board_copy)
-            child_play_score += Game.play_game(start_node=node_copy, play_randomly=True)
+            child_play_score += Game.play_game_randomly(start_node=node_copy)
         return child_play_score
 
         #return heuristic * child_factor
