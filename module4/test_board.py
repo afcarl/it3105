@@ -124,6 +124,25 @@ class TestBoard(unittest.TestCase):
             ]
         )
 
+    def test_do_move_right_3(self):
+        board_values = [
+            [0, 2, 0, 0],
+            [0, 4, 2, 2],
+            [0, 2, 8, 16],
+            [4, 8, 32, 2]
+        ]
+        self.board.set_board_values(board_values)
+        self.board.move(Board.RIGHT)
+        self.assertEqual(
+            self.board.board_values,
+            [
+                [0, 0, 0, 2],
+                [0, 0, 4, 4],
+                [0, 2, 8, 16],
+                [4, 8, 32, 2]
+            ]
+        )
+
     def test_do_move_left_1(self):
         board_values = [
             [0, 4, 4, 2],
@@ -146,6 +165,25 @@ class TestBoard(unittest.TestCase):
     def test_do_move_left_2(self):
         board_values = [
             [8, 4, 4, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ]
+        self.board.set_board_values(board_values)
+        self.board.move(Board.LEFT)
+        self.assertEqual(
+            self.board.board_values,
+            [
+                [8, 8, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ]
+        )
+
+    def test_do_move_left_3(self):
+        board_values = [
+            [0, 4, 4, 8],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0]
@@ -216,6 +254,25 @@ class TestBoard(unittest.TestCase):
                 [0, 0, 4, 8],
                 [0, 0, 2, 32],
                 [4, 4, 8, 8]
+            ]
+        )
+
+    def test_do_move_down_2(self):
+        board_values = [
+            [64, 16, 8, 2],
+            [2, 16, 4, 2],
+            [0, 0, 4, 2],
+            [0, 0, 0, 2]
+        ]
+        self.board.set_board_values(board_values)
+        self.board.move(Board.DOWN)
+        self.assertEqual(
+            self.board.board_values,
+            [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [64, 0, 8, 4],
+                [2, 32, 8, 4]
             ]
         )
 

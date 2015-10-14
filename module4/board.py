@@ -108,21 +108,24 @@ class Board(object):
             return self.move_left()
 
     def move_up(self):
-        for row_index in range(1, self.size):
-            for column_index in xrange(self.size):
+        for column_index in xrange(self.size):
+            min_row_index = 0
+            for row_index in range(1, self.size):
                 if self.board_values[row_index][column_index] > 0:
-                    self.move_tile_up(row_index, column_index)
+                    op, new_row_index = self.move_tile_up(row_index, column_index, min_row_index)
+                    if op == 2:
+                        min_row_index = new_row_index + 1
 
-    def move_tile_up(self, row_index, column_index):
+    def move_tile_up(self, row_index, column_index, min_row_index):
         value = self.board_values[row_index][column_index]
         potential_new_row_index = None
-        for other_row_index in reversed(xrange(row_index)):
+        for other_row_index in reversed(range(min_row_index, row_index)):
             other_value = self.board_values[other_row_index][column_index]
             if other_value == value:
                 # combine
                 self.board_values[other_row_index][column_index] = value + other_value
                 self.board_values[row_index][column_index] = 0
-                return
+                return 2, other_row_index
             elif other_value == 0:
                 potential_new_row_index = other_row_index
             else:
@@ -131,48 +134,58 @@ class Board(object):
             # move
             self.board_values[row_index][column_index] = 0
             self.board_values[potential_new_row_index][column_index] = value
+            return 1, None
+        return 0, None
 
     def move_right(self):
         for row_index in xrange(self.size):
+            max_col_index = self.size - 1
             for column_index in reversed(xrange(self.size - 1)):
                 if self.board_values[row_index][column_index] > 0:
-                    self.move_tile_right(row_index, column_index)
+                    op, new_col_index = self.move_tile_right(row_index, column_index, max_col_index)
+                    if op == 2:
+                        max_col_index = new_col_index - 1
 
-    def move_tile_right(self, row_index, column_index):
+    def move_tile_right(self, row_index, column_index, max_col_index):
         value = self.board_values[row_index][column_index]
-        potential_new_column_index = None
-        for other_column_index in range(column_index + 1, self.size):
-            other_value = self.board_values[row_index][other_column_index]
+        potential_new_col_index = None
+        for other_col_index in range(column_index + 1, max_col_index + 1):
+            other_value = self.board_values[row_index][other_col_index]
             if other_value == value:
                 # combine
-                self.board_values[row_index][other_column_index] = value + other_value
+                self.board_values[row_index][other_col_index] = value + other_value
                 self.board_values[row_index][column_index] = 0
-                return
+                return 2, other_col_index
             elif other_value == 0:
-                potential_new_column_index = other_column_index
+                potential_new_col_index = other_col_index
             else:
                 break
-        if potential_new_column_index is not None:
+        if potential_new_col_index is not None:
             # move
             self.board_values[row_index][column_index] = 0
-            self.board_values[row_index][potential_new_column_index] = value
+            self.board_values[row_index][potential_new_col_index] = value
+            return 1, None
+        return 0, None
 
     def move_down(self):
-        for row_index in reversed(xrange(self.size - 1)):
-            for column_index in xrange(self.size):
+        for column_index in xrange(self.size):
+            max_row_index = self.size - 1
+            for row_index in reversed(xrange(self.size - 1)):
                 if self.board_values[row_index][column_index] > 0:
-                    self.move_tile_down(row_index, column_index)
+                    op, new_row_index = self.move_tile_down(row_index, column_index, max_row_index)
+                    if op == 2:
+                        max_row_index = new_row_index - 1
 
-    def move_tile_down(self, row_index, column_index):
+    def move_tile_down(self, row_index, column_index, max_row_index):
         value = self.board_values[row_index][column_index]
         potential_new_row_index = None
-        for other_row_index in range(row_index + 1, self.size):
+        for other_row_index in range(row_index + 1, max_row_index + 1):
             other_value = self.board_values[other_row_index][column_index]
             if other_value == value:
                 # combine
                 self.board_values[other_row_index][column_index] = value + other_value
                 self.board_values[row_index][column_index] = 0
-                return
+                return 2, other_row_index
             elif other_value == 0:
                 potential_new_row_index = other_row_index
             else:
@@ -181,31 +194,38 @@ class Board(object):
             # move
             self.board_values[row_index][column_index] = 0
             self.board_values[potential_new_row_index][column_index] = value
+            return 1, None
+        return 0, None
 
     def move_left(self):
         for row_index in xrange(self.size):
+            min_col_index = 0
             for column_index in range(1, self.size):
                 if self.board_values[row_index][column_index] > 0:
-                    self.move_tile_left(row_index, column_index)
+                    op, new_col_index = self.move_tile_left(row_index, column_index, min_col_index)
+                    if op == 2:
+                        min_col_index = new_col_index + 1
 
-    def move_tile_left(self, row_index, column_index):
+    def move_tile_left(self, row_index, column_index, min_col_index):
         value = self.board_values[row_index][column_index]
-        potential_new_column_index = None
-        for other_column_index in reversed(xrange(column_index)):
-            other_value = self.board_values[row_index][other_column_index]
+        potential_new_col_index = None
+        for other_col_index in reversed(range(min_col_index, column_index)):
+            other_value = self.board_values[row_index][other_col_index]
             if other_value == value:
                 # combine
-                self.board_values[row_index][other_column_index] = value + other_value
+                self.board_values[row_index][other_col_index] = value + other_value
                 self.board_values[row_index][column_index] = 0
-                return
+                return 2, other_col_index
             elif other_value == 0:
-                potential_new_column_index = other_column_index
+                potential_new_col_index = other_col_index
             else:
                 break
-        if potential_new_column_index is not None:
+        if potential_new_col_index is not None:
             # move
             self.board_values[row_index][column_index] = 0
-            self.board_values[row_index][potential_new_column_index] = value
+            self.board_values[row_index][potential_new_col_index] = value
+            return 1, None
+        return 0, None
 
     def place_new_value_randomly(self):
         empty_positions = []
