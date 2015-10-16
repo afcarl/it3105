@@ -2,6 +2,7 @@ from board import Board
 from copy import deepcopy
 from game import Game
 import random
+import math
 
 
 class Node(object):
@@ -97,7 +98,9 @@ class Node(object):
             board_copy = deepcopy(self.board)
             board_copy.board_values[row_index][column_index] = value
             node = Node(board_copy, depth=self.depth + 1)
-            if node.depth == 3:
+            #max_depth = 4 if node.board.get_num_empty_tiles() < 3 else 3
+            max_depth = 3
+            if node.depth >= max_depth:
                 heuristic_value = node.get_heuristic()
             else:
                 heuristic_value, best_child = node.expectimax_max()
@@ -116,7 +119,7 @@ class Node(object):
                     cell_weight = self.get_cell_weight(row_index, col_index)
                     cell_weight_term += cell_weight * (cell_value ** 1.2)
 
-        empty_cells_term = self.board.get_num_empty_tiles() ** 2
+        empty_cells_term = 0.1 * self.board.get_avg_value() * (self.board.get_num_empty_tiles() ** 2)
 
         smoothness = 0
         monotonicity = 0
@@ -152,12 +155,16 @@ class Node(object):
         score_left = 0
         last_value = cells[0]
         for i in range(1, len(cells)):
-            if cells[i] > last_value:
-                score_right += cells[i] + last_value
-                score_left -= cells[i] + last_value
+            log2_current = (math.log(cells[i], 2) if cells[i] > 0 else 0)
+            log2_last = (math.log(last_value, 2) if last_value > 0 else 0)
+            log2_diff = log2_current - log2_last
+            score_added = (cells[i] + last_value) / (abs(log2_diff) + 1)
+            if log2_diff > 0:
+                score_right += score_added
+                score_left -= score_added
             elif cells[i] < last_value:
-                score_left += cells[i] + last_value
-                score_right -= cells[i] + last_value
+                score_left += score_added
+                score_right -= score_added
             last_value = cells[i]
         return max(score_left, score_right)
 

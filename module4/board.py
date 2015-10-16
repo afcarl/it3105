@@ -249,6 +249,13 @@ class Board(object):
                     num_empty_tiles += 1
         return num_empty_tiles
 
+    def get_avg_value(self):
+        total_sum = 0
+        for row in self.board_values:
+            for cell in row:
+                total_sum += cell
+        return total_sum / 16.0
+
     def __repr__(self):
         result = ''
         for row in self.board_values:
