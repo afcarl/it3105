@@ -112,17 +112,48 @@ class Node(object):
         num_empty_cells = self.board.get_num_empty_tiles()
 
         for row_index in xrange(self.board.size):
-            for column_index in xrange(self.board.size):
-                cell_value = self.board.board_values[row_index][column_index]
+            for col_index in xrange(self.board.size):
+                cell_value = self.board.board_values[row_index][col_index]
                 if cell_value != 0:
-                    cell_weight = self.get_cell_weight(row_index, column_index)
+                    cell_weight = self.get_cell_weight(row_index, col_index)
                     heuristic += cell_weight * cell_value
-        # for row in self.board.board_values:
-        #    pass
 
-        heuristic += num_empty_cells ** 2
+        for row in self.board.board_values:
+            heuristic += 0.2 * self.calculate_smoothness(row)
+            heuristic += 0.2 * self.calculate_monotonicity(row)
+        for col_index in range(self.board.size):
+            col = self.board.get_column(col_index)
+            heuristic += 0.2 * self.calculate_smoothness(col)
+            heuristic += 0.2 * self.calculate_monotonicity(col)
+
+        heuristic += 2 * num_empty_cells ** 2
 
         return heuristic
+
+    @staticmethod
+    def calculate_smoothness(cells):
+        score = 0
+        last_value = cells[0]
+        for i in range(1, len(cells)):
+            if cells[i] == last_value:
+                score += 1
+            last_value = cells[i]
+        return score
+
+    @staticmethod
+    def calculate_monotonicity(cells):
+        score_right = 0
+        score_left = 0
+        last_value = cells[0]
+        for i in range(1, len(cells)):
+            if cells[i] > last_value:
+                score_right += 1
+                score_left -= 1
+            elif cells[i] < last_value:
+                score_left += 1
+                score_right -= 1
+            last_value = cells[i]
+        return max(score_left, score_right)
 
     def get_monte_carlo_heuristic(self):
         child_play_score = 0
