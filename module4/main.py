@@ -19,7 +19,7 @@ class Main(object):
         board.place_new_value_randomly()
 
         start_node = Node(board=board)
-        print Game.play_game(start_node=start_node, gfx=self.gfx, play_randomly=False)
+        print Game.play_game(start_node=start_node, gfx=self.gfx)
 
 if __name__ == '__main__':
     Main()
