@@ -108,25 +108,31 @@ class Node(object):
         return self.expectimax_average_cache
 
     def get_heuristic(self):
-        heuristic = 0
-        num_empty_cells = self.board.get_num_empty_tiles()
-
+        cell_weight_term = 0
         for row_index in xrange(self.board.size):
             for col_index in xrange(self.board.size):
                 cell_value = self.board.board_values[row_index][col_index]
                 if cell_value != 0:
                     cell_weight = self.get_cell_weight(row_index, col_index)
-                    heuristic += cell_weight * cell_value
-        """
+                    cell_weight_term += cell_weight * (cell_value ** 1.2)
+
+        empty_cells_term = self.board.get_num_empty_tiles() ** 2
+
+        smoothness = 0
+        monotonicity = 0
         for row in self.board.board_values:
-            heuristic += 0.2 * self.calculate_smoothness(row)
-            heuristic += 0.2 * self.calculate_monotonicity(row)
+            smoothness += self.calculate_smoothness(row)
+            monotonicity += self.calculate_monotonicity(row)
         for col_index in range(self.board.size):
             col = self.board.get_column(col_index)
-            heuristic += 0.2 * self.calculate_smoothness(col)
-            heuristic += 0.2 * self.calculate_monotonicity(col)
-        """
-        heuristic += num_empty_cells ** 2.5
+            smoothness += self.calculate_smoothness(col)
+            monotonicity += self.calculate_monotonicity(col)
+
+        #print 'cell_weight:', cell_weight_term, 'empty_cells:', empty_cells_term, 'smoothness:', smoothness, 'monotonicity:', monotonicity
+        heuristic = cell_weight_term + \
+                    empty_cells_term + \
+                    smoothness + \
+                    monotonicity
 
         return heuristic
 
@@ -136,7 +142,7 @@ class Node(object):
         last_value = cells[0]
         for i in range(1, len(cells)):
             if cells[i] == last_value:
-                score += 1
+                score += last_value
             last_value = cells[i]
         return score
 
@@ -147,11 +153,11 @@ class Node(object):
         last_value = cells[0]
         for i in range(1, len(cells)):
             if cells[i] > last_value:
-                score_right += 1
-                score_left -= 1
+                score_right += cells[i] + last_value
+                score_left -= cells[i] + last_value
             elif cells[i] < last_value:
-                score_left += 1
-                score_right -= 1
+                score_left += cells[i] + last_value
+                score_right -= cells[i] + last_value
             last_value = cells[i]
         return max(score_left, score_right)
 

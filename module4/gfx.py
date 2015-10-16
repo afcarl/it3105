@@ -80,6 +80,8 @@ class Gfx(object):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     self.fps /= 2  # halve the fps
+                    if self.fps < 0.5:
+                        self.fps = 0.5
                 if event.key == pygame.K_UP:
                     self.fps *= 2  # double the fps
                     if self.fps > 256.0:
