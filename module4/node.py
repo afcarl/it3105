@@ -84,7 +84,7 @@ class Node(object):
 
         total_expected_heuristic_value = 0
 
-        values_to_try = [(2, 0.9)]  # , (4, 0.1)]  # don't consider new fours
+        values_to_try = [(2, 0.9)]  # , (4, 0.1)]  # only consider twos
         combinations = []
 
         for row_index, column_index in empty_tiles:
@@ -117,7 +117,7 @@ class Node(object):
                 if cell_value != 0:
                     cell_weight = self.get_cell_weight(row_index, col_index)
                     heuristic += cell_weight * cell_value
-
+        """
         for row in self.board.board_values:
             heuristic += 0.2 * self.calculate_smoothness(row)
             heuristic += 0.2 * self.calculate_monotonicity(row)
@@ -125,8 +125,8 @@ class Node(object):
             col = self.board.get_column(col_index)
             heuristic += 0.2 * self.calculate_smoothness(col)
             heuristic += 0.2 * self.calculate_monotonicity(col)
-
-        heuristic += 2 * num_empty_cells ** 2
+        """
+        heuristic += num_empty_cells ** 2.5
 
         return heuristic
 
