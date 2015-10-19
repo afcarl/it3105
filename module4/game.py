@@ -4,8 +4,6 @@ import random
 class Game(object):
     @staticmethod
     def play_game(start_node, gfx=None, max_num_moves=10000):
-        sorting_function = lambda child: child.expectimax_max()
-
         current_node = start_node
         for x in xrange(max_num_moves):
             if gfx is not None:
@@ -25,7 +23,7 @@ class Game(object):
             current_node = sorted_children[0]
             """
 
-            expected_heuristic_value, next_node = current_node.expectimax_max()
+            expected_heuristic_value, next_node = current_node.expectimax_max(recalculate_max_depth=True)
             if next_node is None:
                 print 'game over'
                 print current_node.board

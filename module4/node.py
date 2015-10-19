@@ -27,14 +27,13 @@ class Node(object):
         [1.0, 1.0, 1.0, 1.0]
     ]
 
-    def __init__(self, board, parent=None, my_turn=True, depth=0):
+    def __init__(self, board, depth=0, max_depth=3):
         self.board = board
-        self.parent = parent
         self.corner_indexes = (0, self.board.size - 1)
-        self.my_turn = my_turn
         self.depth = depth
         self.expectimax_average_cache = None
         self.expectimax_max_cache = None
+        self.max_depth = max_depth
 
     def __repr__(self):
         return self.board.__repr__() + \
@@ -50,17 +49,18 @@ class Node(object):
             child_board = Board()
             child_board.set_board_values(board_values_copy)
             child_board.move(direction)
-            child = Node(board=child_board, parent=self, depth=self.depth)
+            child = Node(board=child_board, depth=self.depth, max_depth=self.max_depth)
             children.append(child)
         return children
 
     def get_cell_weight(self, row_index, column_index):
-        return self.snake_cell_weights[row_index][column_index]
+        return self.edgy_cell_weights[row_index][column_index]
 
-    def expectimax_max(self):
+    def expectimax_max(self, recalculate_max_depth=False):
         if self.expectimax_max_cache is not None:
             return self.expectimax_max_cache
-
+        if recalculate_max_depth:
+            self.max_depth = 4 if self.board.get_num_empty_tiles() < 3 else 3
         children = self.generate_children()
         if len(children) == 0:
             return 0, None
@@ -97,10 +97,9 @@ class Node(object):
         for row_index, column_index, value, probability in combinations[:4]:
             board_copy = deepcopy(self.board)
             board_copy.board_values[row_index][column_index] = value
-            node = Node(board_copy, depth=self.depth + 1)
-            #max_depth = 4 if node.board.get_num_empty_tiles() < 3 else 3
-            max_depth = 3
-            if node.depth >= max_depth:
+            node = Node(board_copy, depth=self.depth + 1, max_depth=self.max_depth)
+
+            if node.depth >= node.max_depth:
                 heuristic_value = node.get_heuristic()
             else:
                 heuristic_value, best_child = node.expectimax_max()
@@ -145,7 +144,7 @@ class Node(object):
         last_value = cells[0]
         for i in range(1, len(cells)):
             if cells[i] == last_value:
-                score += last_value
+                score += max(last_value, 4)
             last_value = cells[i]
         return score
 
