@@ -8,14 +8,17 @@ class Board(object):
     DOWN = 2
     LEFT = 3
 
-    def __init__(self, size=4):
+    def __init__(self, size=4, board_values=None):
         self.size = size
 
-        self.board_values = []
-        for i in xrange(size):
-            self.board_values.append([])
-            for j in xrange(size):
-                self.board_values[i].append(0)
+        if board_values is None:
+            self.board_values = []
+            for i in xrange(size):
+                self.board_values.append([])
+                for j in xrange(size):
+                    self.board_values[i].append(0)
+        else:
+            self.board_values = board_values
 
     def set_board_values(self, board_values):
         self.board_values = board_values

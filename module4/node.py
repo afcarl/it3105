@@ -20,6 +20,34 @@ class Node(object):
         [2.0, 2.0, 2.0, 2.0]
     ]
 
+    gradient_cell_weights_up = [
+        [4.0, 4.0, 4.0, 4.0],
+        [3.0, 3.0, 3.0, 3.0],
+        [2.0, 2.0, 2.0, 2.0],
+        [1.0, 1.0, 1.0, 1.0]
+    ]
+
+    gradient_cell_weights_right = [
+        [1.0, 2.0, 3.0, 4.0],
+        [1.0, 2.0, 3.0, 4.0],
+        [1.0, 2.0, 3.0, 4.0],
+        [1.0, 2.0, 3.0, 4.0]
+    ]
+
+    gradient_cell_weights_down = [
+        [1.0, 1.0, 1.0, 1.0],
+        [2.0, 2.0, 2.0, 2.0],
+        [3.0, 3.0, 3.0, 3.0],
+        [4.0, 4.0, 4.0, 4.0]
+    ]
+
+    gradient_cell_weights_left = [
+        [4.0, 3.0, 2.0, 1.0],
+        [4.0, 3.0, 2.0, 1.0],
+        [4.0, 3.0, 2.0, 1.0],
+        [4.0, 3.0, 2.0, 1.0]
+    ]
+
     cell_weights = [
         [1.0, 1.0, 1.0, 1.0],
         [1.0, 1.0, 1.0, 1.0],
@@ -36,6 +64,7 @@ class Node(object):
         self.max_depth = max_depth
 
     def __repr__(self):
+        return "node"
         return self.board.__repr__() + \
                ", h=" + str(self.get_heuristic()) + \
                ", exp_max=", str(self.expectimax_max_cache)
@@ -46,21 +75,27 @@ class Node(object):
         children = []
         for direction in possible_moves:
             board_values_copy = deepcopy(self.board.board_values)
-            child_board = Board()
-            child_board.set_board_values(board_values_copy)
+            child_board = Board(size=4, board_values=board_values_copy)
             child_board.move(direction)
             child = Node(board=child_board, depth=self.depth, max_depth=self.max_depth)
             children.append(child)
         return children
 
-    def get_cell_weight(self, row_index, column_index):
-        return self.edgy_cell_weights[row_index][column_index]
+    def get_cell_weight(self, row_index, col_index):
+        return max(
+            self.gradient_cell_weights_up[row_index][col_index],
+            self.gradient_cell_weights_right[row_index][col_index],
+            self.gradient_cell_weights_down[row_index][col_index],
+            self.gradient_cell_weights_left[row_index][col_index]
+        )
+        #return self.edgy_cell_weights[row_index][column_index]
 
     def expectimax_max(self, recalculate_max_depth=False):
         if self.expectimax_max_cache is not None:
             return self.expectimax_max_cache
         if recalculate_max_depth:
-            self.max_depth = 4 if self.board.get_num_empty_tiles() < 3 else 3
+            # self.max_depth = 4 if self.board.get_num_empty_tiles() < 3 else 3
+            self.max_depth = 3
         children = self.generate_children()
         if len(children) == 0:
             return 0, None
@@ -110,14 +145,25 @@ class Node(object):
         return self.expectimax_average_cache
 
     def get_heuristic(self):
-        cell_weight_term = 0
+        cell_weight_term_up = 0
+        cell_weight_term_right = 0
+        cell_weight_term_down = 0
+        cell_weight_term_left = 0
         for row_index in xrange(self.board.size):
             for col_index in xrange(self.board.size):
                 cell_value = self.board.board_values[row_index][col_index]
                 if cell_value != 0:
-                    cell_weight = self.get_cell_weight(row_index, col_index)
-                    cell_weight_term += cell_weight * (cell_value ** 1.2)
+                    cell_weight_term_up += self.gradient_cell_weights_up[row_index][col_index] * (cell_value ** 1.2)
+                    cell_weight_term_right += self.gradient_cell_weights_right[row_index][col_index] * (cell_value ** 1.2)
+                    cell_weight_term_down += self.gradient_cell_weights_down[row_index][col_index] * (cell_value ** 1.2)
+                    cell_weight_term_left += self.gradient_cell_weights_left[row_index][col_index] * (cell_value ** 1.2)
 
+        cell_weight_term = max(
+            cell_weight_term_up,
+            cell_weight_term_right,
+            cell_weight_term_down,
+            cell_weight_term_left
+        )
         empty_cells_term = 0.1 * self.board.get_avg_value() * (self.board.get_num_empty_tiles() ** 2)
 
         smoothness = 0
