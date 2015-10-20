@@ -95,7 +95,7 @@ class Node(object):
             return self.expectimax_max_cache
         if recalculate_max_depth:
             num_empty_tiles, max_tile_value = self.board.get_tile_stats()
-            if num_empty_tiles < 3 and max_tile_value >= 256:
+            if num_empty_tiles < 3 and max_tile_value >= 512:
                 self.max_depth = 4
             else:
                 self.max_depth = 3
