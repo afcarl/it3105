@@ -94,8 +94,11 @@ class Node(object):
         if self.expectimax_max_cache is not None:
             return self.expectimax_max_cache
         if recalculate_max_depth:
-            # self.max_depth = 4 if self.board.get_num_empty_tiles() < 3 else 3
-            self.max_depth = 3
+            num_empty_tiles, max_tile_value = self.board.get_tile_stats()
+            if num_empty_tiles < 3 and max_tile_value >= 256:
+                self.max_depth = 4
+            else:
+                self.max_depth = 3
         children = self.generate_children()
         if len(children) == 0:
             return 0, None
@@ -164,7 +167,8 @@ class Node(object):
             cell_weight_term_down,
             cell_weight_term_left
         )
-        empty_cells_term = 0.1 * self.board.get_avg_value() * (self.board.get_num_empty_tiles() ** 2)
+        num_empty_tiles, max_tile_value = self.board.get_tile_stats()
+        empty_cells_term = 0.05 * max_tile_value * (num_empty_tiles ** 2)
 
         smoothness = 0
         monotonicity = 0

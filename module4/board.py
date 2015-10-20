@@ -244,20 +244,16 @@ class Board(object):
             else:
                 self.board_values[row_index][column_index] = 2
 
-    def get_num_empty_tiles(self):
+    def get_tile_stats(self):
         num_empty_tiles = 0
+        max_tile_value = 2
         for row in self.board_values:
             for cell in row:
                 if cell == 0:
                     num_empty_tiles += 1
-        return num_empty_tiles
-
-    def get_avg_value(self):
-        total_sum = 0
-        for row in self.board_values:
-            for cell in row:
-                total_sum += cell
-        return total_sum / 16.0
+                if cell > max_tile_value:
+                    max_tile_value = cell
+        return num_empty_tiles, max_tile_value
 
     def __repr__(self):
         result = ''
