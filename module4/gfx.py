@@ -11,19 +11,21 @@ class Gfx(object):
     """
     size = width, height = 540, 540
     WHITE = 255, 255, 255
+    FOREGROUND_SMALL = (119, 110, 101)
+    FOREGROUND_LARGER = (249, 246, 242)
     COLORS = {
-        0: (50, 50, 50),
-        2: (195, 197, 2),
-        4: (1, 138, 0),
-        8: (2, 195, 235),
-        16: (1, 139, 214),
-        32: (1, 94, 200),
-        64: (250, 43, 243),
-        128: (114, 5, 172),
-        256: (23, 32, 151),
-        512: (190, 49, 51),
-        1024: (252, 87, 2),
-        2048: (60, 225, 4),
+        0: (158, 148, 138),
+        2: (238, 228, 218),
+        4: (237, 224, 200),
+        8: (242, 177, 121),
+        16: (245, 149, 99),
+        32: (246, 124, 95),
+        64: (246, 94, 59),
+        128: (237, 207, 114),
+        256: (237, 204, 97),
+        512: (237, 200, 80),
+        1024: (237, 197, 63),
+        2048: (255, 174, 0),
         "other": (130, 122, 39)
     }
 
@@ -58,8 +60,9 @@ class Gfx(object):
 
         # draw number on tile
         if number != 0:
+            color = self.FOREGROUND_SMALL if number < 16 else self.FOREGROUND_LARGER
             number_str = str(number)
-            label = self.font.render(str(number), 1, self.WHITE)
+            label = self.font.render(str(number), 1, color)
             label_position = (
                 (x + (0.5 - 0.08 * len(number_str))) * self.GU_X,
                 (y + 0.35) * self.GU_Y
