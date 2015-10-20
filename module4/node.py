@@ -1,6 +1,5 @@
 from board import Board
 from copy import deepcopy
-from game import Game
 import random
 import math
 

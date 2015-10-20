@@ -1,6 +1,5 @@
 from board import Board
 from node import Node
-from game import Game
 import argparse
 import time
 
@@ -59,8 +58,22 @@ class Main(object):
         board.place_new_value_randomly()
         board.place_new_value_randomly()
 
-        start_node = Node(board=board)
-        print Game.play_game(start_node=start_node, gfx=self.gfx)
+        current_node = Node(board=board)
+        for x in xrange(10000):
+            if self.gfx is not None:
+                self.gfx.draw(current_node.board.board_values)
+
+            expected_heuristic_value, next_node = current_node.expectimax_max()
+            if next_node is None:
+                print
+                print 'game over'
+                print current_node.board
+                print x, 'moves'
+                break
+            else:
+                current_node = next_node
+            current_node.board.place_new_value_randomly()
+
 
 if __name__ == '__main__':
     Main()
