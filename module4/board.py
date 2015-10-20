@@ -247,13 +247,16 @@ class Board(object):
     def get_tile_stats(self):
         num_empty_tiles = 0
         max_tile_value = 2
+        tile_sum = 0
         for row in self.board_values:
             for cell in row:
                 if cell == 0:
                     num_empty_tiles += 1
+                else:
+                    tile_sum += cell
                 if cell > max_tile_value:
                     max_tile_value = cell
-        return num_empty_tiles, max_tile_value
+        return num_empty_tiles, max_tile_value, tile_sum
 
     def __repr__(self):
         result = ''

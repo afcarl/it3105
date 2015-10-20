@@ -6,64 +6,57 @@ import math
 
 
 class Node(object):
-    snake_cell_weights = [
+    snake_weights = [
         [10.0, 8.0, 7.0, 6.5],
         [0.5, 0.7, 1.0, 3.0],
         [-0.5, -1.5, -1.8, -2],
         [-3.8, -3.7, -3.5, -3]
     ]
 
-    edgy_cell_weights = [
+    edgy_weights = [
         [2.0, 2.0, 2.0, 2.0],
         [2.0, 1.0, 1.0, 2.0],
         [2.0, 1.0, 1.0, 2.0],
         [2.0, 2.0, 2.0, 2.0]
     ]
 
-    gradient_cell_weights_up = [
+    gradient_weights_up = [
         [4.0, 4.0, 4.0, 4.0],
         [3.0, 3.0, 3.0, 3.0],
         [2.0, 2.0, 2.0, 2.0],
         [1.0, 1.0, 1.0, 1.0]
     ]
 
-    gradient_cell_weights_right = [
+    gradient_weights_right = [
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0]
     ]
 
-    gradient_cell_weights_down = [
+    gradient_weights_down = [
         [1.0, 1.0, 1.0, 1.0],
         [2.0, 2.0, 2.0, 2.0],
         [3.0, 3.0, 3.0, 3.0],
         [4.0, 4.0, 4.0, 4.0]
     ]
 
-    gradient_cell_weights_left = [
+    gradient_weights_left = [
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0]
     ]
 
-    cell_weights = [
-        [1.0, 1.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0, 1.0]
-    ]
-
     max_branching_factor = 4
+    max_depth = 3
 
-    def __init__(self, board, depth=0, max_depth=3):
+    def __init__(self, board, depth=0):
         self.board = board
         self.corner_indexes = (0, self.board.size - 1)
         self.depth = depth
         self.expectimax_average_cache = None
         self.expectimax_max_cache = None
-        self.max_depth = max_depth
 
     def __repr__(self):
         return self.board.__repr__() + \
@@ -78,19 +71,13 @@ class Node(object):
             board_values_copy = deepcopy(self.board.board_values)
             child_board = Board(size=4, board_values=board_values_copy)
             child_board.move(direction)
-            child = Node(board=child_board, depth=self.depth, max_depth=self.max_depth)
+            child = Node(board=child_board, depth=self.depth)
             children.append(child)
         return children
 
-    def expectimax_max(self, recalculate_max_depth=False):
+    def expectimax_max(self):
         if self.expectimax_max_cache is not None:
             return self.expectimax_max_cache
-        if recalculate_max_depth:
-            num_empty_tiles, max_tile_value = self.board.get_tile_stats()
-            if num_empty_tiles <= 2 and max_tile_value >= 1024:
-                self.max_depth = 4  # should be 4 when code is optimized
-            else:
-                self.max_depth = 3
         children = self.generate_children()
         if len(children) == 0:
             return 0, None
@@ -121,9 +108,9 @@ class Node(object):
         for row_index, column_index in empty_tiles[:self.max_branching_factor]:
             board_copy = deepcopy(self.board)
             board_copy.board_values[row_index][column_index] = value
-            node = Node(board_copy, depth=self.depth + 1, max_depth=self.max_depth)
+            node = Node(board_copy, depth=self.depth + 1)
 
-            if node.depth >= node.max_depth:
+            if node.depth >= Node.max_depth:
                 heuristic_value = node.get_heuristic()
             else:
                 heuristic_value, best_child = node.expectimax_max()
@@ -143,10 +130,14 @@ class Node(object):
                 cell_value = self.board.board_values[row_index][col_index]
                 if cell_value != 0:
                     exponent = 1.3
-                    cell_weight_term_up += self.gradient_cell_weights_up[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_right += self.gradient_cell_weights_right[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_down += self.gradient_cell_weights_down[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_left += self.gradient_cell_weights_left[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_up += \
+                        self.gradient_weights_up[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_right += \
+                        self.gradient_weights_right[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_down += \
+                        self.gradient_weights_down[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_left += \
+                        self.gradient_weights_left[row_index][col_index] * (cell_value ** exponent)
 
         cell_weight_term = max(
             cell_weight_term_up,
@@ -154,7 +145,7 @@ class Node(object):
             cell_weight_term_down,
             cell_weight_term_left
         )
-        num_empty_tiles, max_tile_value = self.board.get_tile_stats()
+        num_empty_tiles, max_tile_value, tile_sum = self.board.get_tile_stats()
         empty_cells_term = 0.05 * max_tile_value * (num_empty_tiles ** 2)
 
         smoothness = 0
