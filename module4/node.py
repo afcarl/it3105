@@ -50,6 +50,8 @@ class Node(object):
 
     max_branching_factor = 4
     max_depth = 3
+    smoothness_cache = {}
+    monotonicity_cache = {}
 
     def __init__(self, board, depth=0):
         self.board = board
@@ -169,16 +171,26 @@ class Node(object):
 
     @staticmethod
     def calculate_smoothness(cells):
+        cells_tuple = tuple(cells)
+        if cells_tuple in Node.smoothness_cache:
+            return Node.smoothness_cache[cells_tuple]
+
         score = 0
         last_value = cells[0]
         for i in range(1, len(cells)):
             if cells[i] == last_value:
                 score += max(last_value, 4)
             last_value = cells[i]
+
+        Node.smoothness_cache[cells_tuple] = score
         return score
 
     @staticmethod
     def calculate_monotonicity(cells):
+        cells_tuple = tuple(cells)
+        if cells_tuple in Node.monotonicity_cache:
+            return Node.monotonicity_cache[cells_tuple]
+
         score_right = 0
         score_left = 0
         last_value = cells[0]
@@ -194,7 +206,9 @@ class Node(object):
                 score_left += score_added
                 score_right -= score_added
             last_value = cells[i]
-        return max(score_left, score_right)
+        result = max(score_left, score_right)
+        Node.monotonicity_cache[cells_tuple] = result
+        return result
 
     def get_monte_carlo_heuristic(self):
         child_play_score = 0
