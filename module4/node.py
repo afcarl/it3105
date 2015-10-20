@@ -64,7 +64,6 @@ class Node(object):
         self.max_depth = max_depth
 
     def __repr__(self):
-        return "node"
         return self.board.__repr__() + \
                ", h=" + str(self.get_heuristic()) + \
                ", exp_max=", str(self.expectimax_max_cache)
@@ -96,7 +95,7 @@ class Node(object):
         if recalculate_max_depth:
             num_empty_tiles, max_tile_value = self.board.get_tile_stats()
             if num_empty_tiles < 3 and max_tile_value >= 512:
-                self.max_depth = 4
+                self.max_depth = 3  # should be 4 when code is optimized
             else:
                 self.max_depth = 3
         children = self.generate_children()
