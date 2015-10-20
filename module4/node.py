@@ -52,6 +52,13 @@ class Node(object):
     max_depth = 3
     smoothness_cache = {}
     monotonicity_cache = {}
+    row_weight_cache = [
+        {},
+        {},
+        {},
+        {}
+    ]
+    cell_weight_exponent = 1.3
 
     def __init__(self, board, depth=0):
         self.board = board
@@ -122,24 +129,51 @@ class Node(object):
         self.expectimax_average_cache = float(total_expected_heuristic_value) / len(empty_tiles)
         return self.expectimax_average_cache
 
+    def get_row_weight(self, row_index):
+        cells_tuple = tuple(self.board.board_values[row_index])
+        if cells_tuple in self.row_weight_cache[row_index]:
+            return self.row_weight_cache[row_index][cells_tuple]
+
+        cell_weight_term_up = 0
+        cell_weight_term_right = 0
+        cell_weight_term_down = 0
+        cell_weight_term_left = 0
+        for col_index in xrange(self.board.size):
+            cell_value = self.board.board_values[row_index][col_index]
+            if cell_value != 0:
+                cell_weight_term_up += \
+                    self.gradient_weights_up[row_index][col_index] * \
+                    (cell_value ** self.cell_weight_exponent)
+                cell_weight_term_right += \
+                    self.gradient_weights_right[row_index][col_index] * \
+                    (cell_value ** self.cell_weight_exponent)
+                cell_weight_term_down += \
+                    self.gradient_weights_down[row_index][col_index] * \
+                    (cell_value ** self.cell_weight_exponent)
+                cell_weight_term_left += \
+                    self.gradient_weights_left[row_index][col_index] * \
+                    (cell_value ** self.cell_weight_exponent)
+
+        result = (
+            cell_weight_term_up,
+            cell_weight_term_right,
+            cell_weight_term_down,
+            cell_weight_term_left
+        )
+        self.row_weight_cache[row_index][cells_tuple] = result
+        return result
+
     def get_heuristic(self):
         cell_weight_term_up = 0
         cell_weight_term_right = 0
         cell_weight_term_down = 0
         cell_weight_term_left = 0
         for row_index in xrange(self.board.size):
-            for col_index in xrange(self.board.size):
-                cell_value = self.board.board_values[row_index][col_index]
-                if cell_value != 0:
-                    exponent = 1.3
-                    cell_weight_term_up += \
-                        self.gradient_weights_up[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_right += \
-                        self.gradient_weights_right[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_down += \
-                        self.gradient_weights_down[row_index][col_index] * (cell_value ** exponent)
-                    cell_weight_term_left += \
-                        self.gradient_weights_left[row_index][col_index] * (cell_value ** exponent)
+            up, right, down, left = self.get_row_weight(row_index)
+            cell_weight_term_up += up
+            cell_weight_term_right += right
+            cell_weight_term_down += down
+            cell_weight_term_left += left
 
         cell_weight_term = max(
             cell_weight_term_up,
