@@ -1,5 +1,4 @@
 import sys
-from ast import literal_eval
 from rect import Rect
 from point import Point
 from nav_node import NavNode

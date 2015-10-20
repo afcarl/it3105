@@ -1,13 +1,25 @@
 from board import Board
 from node import Node
 from game import Game
+import argparse
 
 
 class Main(object):
     def __init__(self):
         size = 4
-        disable_gfx = False
-        if disable_gfx:
+
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument(
+            '--disable-gfx',
+            nargs='?',
+            dest='disable_gfx',
+            const=True,
+            required=False,
+            default=False
+        )
+        args = arg_parser.parse_args()
+
+        if args.disable_gfx:
             from board_printer import BoardPrinter
             self.gfx = BoardPrinter()
         else:

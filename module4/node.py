@@ -209,11 +209,3 @@ class Node(object):
         result = max(score_left, score_right)
         Node.monotonicity_cache[cells_tuple] = result
         return result
-
-    def get_monte_carlo_heuristic(self):
-        child_play_score = 0
-        for x in xrange(100):
-            board_copy = deepcopy(self.board)
-            node_copy = Node(board_copy)
-            child_play_score += Game.play_game_randomly(start_node=node_copy)
-        return child_play_score
