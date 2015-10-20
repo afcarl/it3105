@@ -55,6 +55,8 @@ class Node(object):
         [1.0, 1.0, 1.0, 1.0]
     ]
 
+    max_branching_factor = 4
+
     def __init__(self, board, depth=0, max_depth=3):
         self.board = board
         self.corner_indexes = (0, self.board.size - 1)
@@ -80,22 +82,13 @@ class Node(object):
             children.append(child)
         return children
 
-    def get_cell_weight(self, row_index, col_index):
-        return max(
-            self.gradient_cell_weights_up[row_index][col_index],
-            self.gradient_cell_weights_right[row_index][col_index],
-            self.gradient_cell_weights_down[row_index][col_index],
-            self.gradient_cell_weights_left[row_index][col_index]
-        )
-        #return self.edgy_cell_weights[row_index][column_index]
-
     def expectimax_max(self, recalculate_max_depth=False):
         if self.expectimax_max_cache is not None:
             return self.expectimax_max_cache
         if recalculate_max_depth:
             num_empty_tiles, max_tile_value = self.board.get_tile_stats()
-            if num_empty_tiles < 3 and max_tile_value >= 512:
-                self.max_depth = 3  # should be 4 when code is optimized
+            if num_empty_tiles <= 2 and max_tile_value >= 1024:
+                self.max_depth = 4  # should be 4 when code is optimized
             else:
                 self.max_depth = 3
         children = self.generate_children()
@@ -122,16 +115,10 @@ class Node(object):
 
         total_expected_heuristic_value = 0
 
-        values_to_try = [(2, 0.9)]  # , (4, 0.1)]  # only consider twos
-        combinations = []
+        random.shuffle(empty_tiles)
 
-        for row_index, column_index in empty_tiles:
-            for value, probability in values_to_try:
-                combinations.append((row_index, column_index, value, probability))
-        random.shuffle(combinations)
-
-        # max branching factor is 4
-        for row_index, column_index, value, probability in combinations[:4]:
+        value, probability = 2, 0.9  # only consider twos
+        for row_index, column_index in empty_tiles[:self.max_branching_factor]:
             board_copy = deepcopy(self.board)
             board_copy.board_values[row_index][column_index] = value
             node = Node(board_copy, depth=self.depth + 1, max_depth=self.max_depth)
@@ -143,7 +130,7 @@ class Node(object):
 
             total_expected_heuristic_value += heuristic_value * probability
 
-        self.expectimax_average_cache = float(total_expected_heuristic_value) / len(combinations)
+        self.expectimax_average_cache = float(total_expected_heuristic_value) / len(empty_tiles)
         return self.expectimax_average_cache
 
     def get_heuristic(self):
