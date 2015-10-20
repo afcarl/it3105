@@ -60,7 +60,7 @@ class Gfx(object):
 
         # draw number on tile
         if number != 0:
-            color = self.FOREGROUND_SMALL if number < 16 else self.FOREGROUND_LARGER
+            color = self.FOREGROUND_SMALL if number < 8 else self.FOREGROUND_LARGER
             number_str = str(number)
             label = self.font.render(str(number), 1, color)
             label_position = (

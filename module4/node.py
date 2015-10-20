@@ -156,10 +156,11 @@ class Node(object):
             for col_index in xrange(self.board.size):
                 cell_value = self.board.board_values[row_index][col_index]
                 if cell_value != 0:
-                    cell_weight_term_up += self.gradient_cell_weights_up[row_index][col_index] * (cell_value ** 1.2)
-                    cell_weight_term_right += self.gradient_cell_weights_right[row_index][col_index] * (cell_value ** 1.2)
-                    cell_weight_term_down += self.gradient_cell_weights_down[row_index][col_index] * (cell_value ** 1.2)
-                    cell_weight_term_left += self.gradient_cell_weights_left[row_index][col_index] * (cell_value ** 1.2)
+                    exponent = 1.3
+                    cell_weight_term_up += self.gradient_cell_weights_up[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_right += self.gradient_cell_weights_right[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_down += self.gradient_cell_weights_down[row_index][col_index] * (cell_value ** exponent)
+                    cell_weight_term_left += self.gradient_cell_weights_left[row_index][col_index] * (cell_value ** exponent)
 
         cell_weight_term = max(
             cell_weight_term_up,
@@ -184,7 +185,8 @@ class Node(object):
         heuristic = cell_weight_term + \
                     empty_cells_term + \
                     smoothness + \
-                    monotonicity
+                    monotonicity + \
+                    max_tile_value
 
         return heuristic
 
