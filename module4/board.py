@@ -264,30 +264,8 @@ class Board(object):
             result += str(row) + "\n"
         return result
 
-    def get_row(self, row_index):
-        return self.board_values[row_index]
-
     def get_column(self, col_index):
         column = []
         for row in self.board_values:
             column.append(row[col_index])
         return column
-
-    @staticmethod
-    def convert_cells_to_integer(cells):
-        binary_string = ""
-        for cell in cells:
-            cell_log2 = 0 if cell == 0 else int(math.log(cell, 2))
-            binary_string += "{0:04b}".format(cell_log2)
-        return int(binary_string, 2)
-
-    @staticmethod
-    def convert_integer_to_cells(integer):
-        binary = "{0:016b}".format(integer)
-        cells = []
-        for i in range(0, 16, 4):
-            chunk = binary[i:i + 4]
-            number_log2 = int(chunk, 2)
-            number = 0 if number_log2 == 0 else int(2 ** number_log2)
-            cells.append(number)
-        return cells

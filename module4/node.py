@@ -5,48 +5,30 @@ import math
 
 
 class Node(object):
-    snake_weights = [
-        [10.0, 8.0, 7.0, 6.5],
-        [0.5, 0.7, 1.0, 3.0],
-        [-0.5, -1.5, -1.8, -2],
-        [-3.8, -3.7, -3.5, -3]
-    ]
-
-    edgy_weights = [
-        [2.0, 2.0, 2.0, 2.0],
-        [2.0, 1.0, 1.0, 2.0],
-        [2.0, 1.0, 1.0, 2.0],
-        [2.0, 2.0, 2.0, 2.0]
-    ]
-
     gradient_weights_up = [
         [4.0, 4.0, 4.0, 4.0],
         [3.0, 3.0, 3.0, 3.0],
         [2.0, 2.0, 2.0, 2.0],
         [1.0, 1.0, 1.0, 1.0]
     ]
-
     gradient_weights_right = [
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0],
         [1.0, 2.0, 3.0, 4.0]
     ]
-
     gradient_weights_down = [
         [1.0, 1.0, 1.0, 1.0],
         [2.0, 2.0, 2.0, 2.0],
         [3.0, 3.0, 3.0, 3.0],
         [4.0, 4.0, 4.0, 4.0]
     ]
-
     gradient_weights_left = [
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0],
         [4.0, 3.0, 2.0, 1.0]
     ]
-
     max_branching_factor = 4
     max_depth = 3
     smoothness_cache = {}
@@ -193,7 +175,6 @@ class Node(object):
             smoothness += self.calculate_smoothness(col)
             monotonicity += self.calculate_monotonicity(col)
 
-        #print 'cell_weight:', cell_weight_term, 'empty_cells:', empty_cells_term, 'smoothness:', smoothness, 'monotonicity:', monotonicity
         heuristic = cell_weight_term + \
                     empty_cells_term + \
                     smoothness + \

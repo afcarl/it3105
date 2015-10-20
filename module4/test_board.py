@@ -306,17 +306,6 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(num_fours + num_twos, 1)
 
-    def test_row_representation(self):
-        board_values = [
-            [64, 16, 8, 2],
-            [2, 16, 4, 2],
-            [0, 0, 4, 2],
-            [0, 0, 0, 2]
-        ]
-        self.board.set_board_values(board_values)
-        self.assertEqual(self.board.get_row(0), [64, 16, 8, 2])
-        self.assertEqual(self.board.get_row(2), [0, 0, 4, 2])
-
     def test_col_representation(self):
         board_values = [
             [64, 16, 8, 2],
@@ -327,23 +316,6 @@ class TestBoard(unittest.TestCase):
         self.board.set_board_values(board_values)
         self.assertEqual(self.board.get_column(0), [64, 2, 0, 0])
         self.assertEqual(self.board.get_column(3), [2, 2, 2, 2])
-
-    def test_convert_cells_to_integer(self):
-        board_values = [
-            [64, 16, 8, 2],
-            [2, 16, 4, 2],
-            [0, 0, 4, 2],
-            [0, 0, 0, 2]
-        ]
-        self.board.set_board_values(board_values)
-        third_row = self.board.get_row(2)
-        integer_representation = self.board.convert_cells_to_integer(third_row)
-        self.assertEqual(integer_representation, 33)  # 0000000000100001
-
-    def test_convert_integer_to_cells(self):
-        integer_representation = int('0000000000100001', 2)  # 33
-        cells = self.board.convert_integer_to_cells(integer_representation)
-        self.assertEqual(cells, [0, 0, 4, 2])
 
 if __name__ == '__main__':
     unittest.main()

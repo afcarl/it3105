@@ -7,7 +7,7 @@ pygame.font.init()
 
 class Gfx(object):
     """
-    This class takes care of drawing the state of the search to a window using pygame
+    This class takes care of drawing the state of the 2048 game to a window using pygame
     """
     size = width, height = 540, 540
     WHITE = 255, 255, 255
