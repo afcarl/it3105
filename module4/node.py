@@ -145,6 +145,10 @@ class Node(object):
         return result
 
     def get_heuristic(self):
+        num_empty_tiles, max_tile_value, tile_sum = self.board.get_tile_stats()
+        empty_cells_term = 0.05 * max_tile_value * (num_empty_tiles ** 2)
+        is_max_tile_in_corner = False
+
         cell_weight_term_up = 0
         cell_weight_term_right = 0
         cell_weight_term_down = 0
@@ -156,14 +160,19 @@ class Node(object):
             cell_weight_term_down += down
             cell_weight_term_left += left
 
+            for col_index in xrange(self.board.size):
+                if self.board.board_values[row_index][col_index] == max_tile_value:
+                    if row_index in (0, 3) and col_index in (0, 3):
+                        is_max_tile_in_corner = True
+
+        max_value_in_corner_term = 0.2 * max_tile_value if is_max_tile_in_corner else 0
+
         cell_weight_term = max(
             cell_weight_term_up,
             cell_weight_term_right,
             cell_weight_term_down,
             cell_weight_term_left
         )
-        num_empty_tiles, max_tile_value, tile_sum = self.board.get_tile_stats()
-        empty_cells_term = 0.05 * max_tile_value * (num_empty_tiles ** 2)
 
         smoothness = 0
         monotonicity = 0
@@ -175,11 +184,14 @@ class Node(object):
             smoothness += self.calculate_smoothness(col)
             monotonicity += self.calculate_monotonicity(col)
 
+        smoothness *= 0.5
+
         heuristic = cell_weight_term + \
                     empty_cells_term + \
                     smoothness + \
                     monotonicity + \
-                    max_tile_value
+                    max_tile_value + \
+                    max_value_in_corner_term
 
         return heuristic
 
@@ -193,7 +205,7 @@ class Node(object):
         last_value = cells[0]
         for i in range(1, len(cells)):
             if cells[i] == last_value:
-                score += max(last_value, 4)
+                score += min(last_value, 4)
             last_value = cells[i]
 
         Node.smoothness_cache[cells_tuple] = score
@@ -205,8 +217,7 @@ class Node(object):
         if cells_tuple in Node.monotonicity_cache:
             return Node.monotonicity_cache[cells_tuple]
 
-        score_right = 0
-        score_left = 0
+        score = 0
         last_value = cells[0]
         for i in range(1, len(cells)):
             log2_current = (math.log(cells[i], 2) if cells[i] > 0 else 0)
@@ -214,12 +225,10 @@ class Node(object):
             log2_diff = log2_current - log2_last
             score_added = (cells[i] + last_value) / (abs(log2_diff) + 1)
             if log2_diff > 0:
-                score_right += score_added
-                score_left -= score_added
+                score += score_added
             elif cells[i] < last_value:
-                score_left += score_added
-                score_right -= score_added
+                score -= score_added
             last_value = cells[i]
-        result = max(score_left, score_right)
+        result = abs(score)
         Node.monotonicity_cache[cells_tuple] = result
         return result

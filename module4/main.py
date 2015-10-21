@@ -56,7 +56,6 @@ class Main(object):
     def run(self):
         board = Board(size=self.size)
         board.place_new_value_randomly()
-        board.place_new_value_randomly()
 
         current_node = Node(board=board)
         for x in xrange(10000):
