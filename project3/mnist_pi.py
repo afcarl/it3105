@@ -59,7 +59,7 @@ class Main(object):
             dest='activation_functions',
             nargs='+',
             type=str,
-            choices=['rel', 'tanh'],  # TODO: add more choices
+            choices=['rel', 'tanh', 'sigmoid', 'linear'],
             required=False,
             default=['rel', 'rel']
         )
