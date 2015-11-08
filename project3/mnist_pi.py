@@ -33,6 +33,20 @@ class Main(object):
             required=False,
             default=500
         )
+        arg_parser.add_argument(
+            '--learning-rate',
+            dest='learning_rate',
+            type=float,
+            required=False,
+            default=0.1
+        )
+        arg_parser.add_argument(
+            '--momentum',
+            dest='momentum',
+            type=float,
+            required=False,
+            default=0.9
+        )
 
         self.args = arg_parser.parse_args()
 
@@ -76,7 +90,12 @@ class Main(object):
         self.network.set_weight_modifiers({"FC": bs.value_modifiers.ConstrainL2Norm(1)})
 
     def set_up_trainer(self):
-        self.trainer = bs.Trainer(bs.training.MomentumStepper(learning_rate=0.1, momentum=0.9))
+        self.trainer = bs.Trainer(
+            bs.training.MomentumStepper(
+                learning_rate=self.args.learning_rate,
+                momentum=self.args.momentum
+            )
+        )
         self.trainer.add_hook(bs.hooks.ProgressBar())
         scorers = [bs.scorers.Accuracy(out_name='Output.outputs.predictions')]
         self.trainer.add_hook(bs.hooks.MonitorScores('valid_getter', scorers,
