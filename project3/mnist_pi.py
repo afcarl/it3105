@@ -47,8 +47,59 @@ class Main(object):
             required=False,
             default=0.9
         )
+        arg_parser.add_argument(
+            '--num-hidden-layers',
+            dest='num_hidden_layers',
+            type=int,
+            required=False,
+            default=2
+        )
+        arg_parser.add_argument(
+            '--activation-functions',
+            dest='activation_functions',
+            nargs='+',
+            type=str,
+            choices=['rel', 'tanh'],  # TODO: add more choices
+            required=False,
+            default=['rel', 'rel']
+        )
+        arg_parser.add_argument(
+            '--hidden-layer-sizes',
+            dest='hidden_layer_sizes',
+            nargs='+',
+            type=int,
+            required=False,
+            default=[1200, 1200]
+        )
+        arg_parser.add_argument(
+            '--dropout-probabilities',
+            dest='dropout_probabilities',
+            nargs='+',
+            type=float,
+            required=False,
+            default=[0.2, 0.5, 0.5]
+        )
 
         self.args = arg_parser.parse_args()
+
+        if self.args.num_hidden_layers != len(self.args.activation_functions):
+            arg_parser.error('Mismatch detected: num_hidden_layers != len(activation_functions)')
+
+        if self.args.num_hidden_layers != len(self.args.hidden_layer_sizes):
+            arg_parser.error('Mismatch detected: num_hidden_layers != len(hidden_layer_sizes)')
+
+        for hidden_layer_size in self.args.hidden_layer_sizes:
+            if hidden_layer_size < 1:
+                arg_parser.error('Integers in hidden_layer_sizes must be >= 1')
+
+        if len(self.args.dropout_probabilities) != self.args.num_hidden_layers + 1:
+            arg_parser.error(
+                'Mismatch detected: len(dropout_probabilities) != num_hidden_layers + 1'
+            )
+
+        for dropout_probability in self.args.dropout_probabilities:
+            if dropout_probability < 0 or dropout_probability > 1:
+                arg_parser.error('Dropout probabilities must be in the range[0, 1]')
 
         bs.global_rnd.set_seed(self.args.seed)
 
@@ -75,15 +126,24 @@ class Main(object):
     def set_up_network(self):
         inp, fc = bs.tools.get_in_out_layers('classification', (28, 28, 1), 10,
                                              projection_name='FC')
-        self.network = bs.Network.from_layer(
-            inp >>
-            bs.layers.Dropout(drop_prob=0.2) >>
-            bs.layers.FullyConnected(1200, name='Hid1', activation='rel') >>  # rel = rectified linear
-            bs.layers.Dropout(drop_prob=0.5) >>
-            bs.layers.FullyConnected(1200, name='Hid2', activation='rel') >>
-            bs.layers.Dropout(drop_prob=0.5) >>
-            fc
-        )
+
+        layer_spec = inp >> bs.layers.Dropout(drop_prob=self.args.dropout_probabilities[0])
+
+        for i in range(self.args.num_hidden_layers):
+            layer_name = 'Hid' + str(i + 1)
+            activation_function = self.args.activation_functions[i]
+            layer_size = self.args.hidden_layer_sizes[i]
+            layer_spec = layer_spec >> bs.layers.FullyConnected(
+                layer_size,
+                name=layer_name,
+                activation=activation_function
+            )
+            dropout_probability = self.args.dropout_probabilities[i + 1]
+            layer_spec = layer_spec >> bs.layers.Dropout(drop_prob=dropout_probability)
+
+        layer_spec = layer_spec >> fc
+
+        self.network = bs.Network.from_layer(layer_spec)
 
         self.network.set_handler(PyCudaHandler())
         self.network.initialize(bs.initializers.Gaussian(0.01))
