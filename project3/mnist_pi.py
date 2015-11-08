@@ -79,6 +79,14 @@ class Main(object):
             required=False,
             default=[0.2, 0.5, 0.5]
         )
+        arg_parser.add_argument(
+            '--minibatch-size',
+            dest='minibatch_size',
+            type=int,
+            required=False,
+            choices=range(1, 1200),
+            default=100
+        )
 
         self.args = arg_parser.parse_args()
 
@@ -120,8 +128,8 @@ class Main(object):
         x_tr, y_tr = ds['training']['default'][:], ds['training']['targets'][:]
         x_va, y_va = ds['validation']['default'][:], ds['validation']['targets'][:]
 
-        self.getter_tr = Minibatches(100, default=x_tr, targets=y_tr)
-        self.getter_va = Minibatches(100, default=x_va, targets=y_va)
+        self.getter_tr = Minibatches(self.args.minibatch_size, default=x_tr, targets=y_tr)
+        self.getter_va = Minibatches(self.args.minibatch_size, default=x_va, targets=y_va)
 
     def set_up_network(self):
         inp, fc = bs.tools.get_in_out_layers('classification', (28, 28, 1), 10,
