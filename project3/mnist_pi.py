@@ -7,10 +7,29 @@ import argparse
 import brainstorm as bs
 from brainstorm.data_iterators import Minibatches
 from brainstorm.handlers import PyCudaHandler
+import re
 
 
 class Main(object):
     def __init__(self):
+
+        self.args = None
+        self.filename = None
+        self.trainer = None
+        self.getter_tr = None
+        self.getter_va = None
+        self.network = None
+
+        self.parse_args()
+        bs.global_rnd.set_seed(self.args.seed)
+
+        self.calculate_filename()
+        self.set_up_iterators()
+        self.set_up_network()
+        self.set_up_trainer()
+        self.train()
+
+    def parse_args(self):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument(
             '--seed',
@@ -93,6 +112,8 @@ class Main(object):
         if self.args.num_hidden_layers != len(self.args.activation_functions):
             arg_parser.error('Mismatch detected: num_hidden_layers != len(activation_functions)')
 
+        self.args.activation_functions = map(str, self.args.activation_functions)
+
         if self.args.num_hidden_layers != len(self.args.hidden_layer_sizes):
             arg_parser.error('Mismatch detected: num_hidden_layers != len(hidden_layer_sizes)')
 
@@ -109,17 +130,21 @@ class Main(object):
             if dropout_probability < 0 or dropout_probability > 1:
                 arg_parser.error('Dropout probabilities must be in the range[0, 1]')
 
-        bs.global_rnd.set_seed(self.args.seed)
-
-        self.trainer = None
-        self.getter_tr = None
-        self.getter_va = None
-        self.network = None
-
-        self.set_up_iterators()
-        self.set_up_network()
-        self.set_up_trainer()
-        self.train()
+    def calculate_filename(self):
+        self.filename = (
+            'hl' + str(self.args.num_hidden_layers) +
+            '__sizes' + str(self.args.hidden_layer_sizes) +
+            '__acfn' + str(self.args.activation_functions) +
+            '__dr' + str(self.args.dropout_probabilities) +
+            '__lr' + str(self.args.learning_rate) +
+            '__mb' + str(self.args.minibatch_size) +
+            '__mom' + str(self.args.momentum) +
+            '__seed' + str(self.args.seed)
+        )
+        print(self.filename)
+        self.filename = re.sub('[^A-Za-z0-9_.]+', '-', self.filename)
+        self.filename += ".hdf5"
+        print(self.filename)
 
     def set_up_iterators(self):
         data_dir = os.environ.get('BRAINSTORM_DATA_DIR', '../data')
@@ -169,7 +194,7 @@ class Main(object):
         self.trainer.add_hook(bs.hooks.MonitorScores('valid_getter', scorers,
                                                      name='validation'))
         self.trainer.add_hook(bs.hooks.SaveBestNetwork('validation.Accuracy',
-                                                       filename='mnist_pi_best.hdf5',
+                                                       filename=self.filename,
                                                        name='best weights',
                                                        criterion='max'))
         self.trainer.add_hook(
