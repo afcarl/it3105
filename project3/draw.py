@@ -18,8 +18,8 @@ class Main(object):
     def parse_args(self):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument(
-            '-i',
-            '--filename',
+            '-n',
+            '--network',
             dest='network_filename',
             type=str,
             required=True,
