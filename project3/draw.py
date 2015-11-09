@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 from __future__ import division, print_function, unicode_literals
-import os
-import h5py
 import argparse
 import brainstorm as bs
-from brainstorm.data_iterators import Minibatches
-from brainstorm.handlers import PyCudaHandler
-import re
 
 
 class Main(object):
