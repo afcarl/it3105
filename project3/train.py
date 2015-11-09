@@ -43,7 +43,7 @@ class Main(object):
             dest='accuracy_threshold',
             type=float,
             required=False,
-            default=0.96
+            default=1
         )
         arg_parser.add_argument(
             '--max-num-epochs',
@@ -106,7 +106,22 @@ class Main(object):
             choices=range(1, 1200),
             default=100
         )
-
+        arg_parser.add_argument(
+            '--patience',
+            dest='patience',
+            type=int,
+            required=False,
+            default=50
+        )
+        arg_parser.add_argument(
+            '--disable-saving',
+            dest='disable_saving',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Add this flag to disable saving of the resulting network',
+            default=False
+        )
         self.args = arg_parser.parse_args()
 
         if self.args.num_hidden_layers != len(self.args.activation_functions):
@@ -141,10 +156,8 @@ class Main(object):
             '__mom' + str(self.args.momentum) +
             '__seed' + str(self.args.seed)
         )
-        print(self.filename)
         self.filename = re.sub('[^A-Za-z0-9_.]+', '-', self.filename)
         self.filename += ".hdf5"
-        print(self.filename)
 
     def set_up_iterators(self):
         data_dir = os.environ.get('BRAINSTORM_DATA_DIR', '../data')
@@ -157,8 +170,14 @@ class Main(object):
         self.getter_va = Minibatches(self.args.minibatch_size, default=x_va, targets=y_va)
 
     def set_up_network(self):
-        inp, fc = bs.tools.get_in_out_layers('classification', (28, 28, 1), 10,
-                                             projection_name='FC')
+        image_shape = (28, 28, 1)
+        num_output_classes = 10
+        inp, fc = bs.tools.get_in_out_layers(
+            'classification',
+            image_shape,
+            num_output_classes,
+            projection_name='FC'
+        )
 
         layer_spec = inp >> bs.layers.Dropout(drop_prob=self.args.dropout_probabilities[0])
 
@@ -191,17 +210,34 @@ class Main(object):
         )
         self.trainer.add_hook(bs.hooks.ProgressBar())
         scorers = [bs.scorers.Accuracy(out_name='Output.outputs.predictions')]
-        self.trainer.add_hook(bs.hooks.MonitorScores('valid_getter', scorers,
-                                                     name='validation'))
-        self.trainer.add_hook(bs.hooks.SaveBestNetwork('validation.Accuracy',
-                                                       filename=self.filename,
-                                                       name='best weights',
-                                                       criterion='max'))
+        self.trainer.add_hook(
+            bs.hooks.MonitorScores(
+                'valid_getter',
+                scorers,
+                name='validation'
+            )
+        )
+        if not self.args.disable_saving:
+            self.trainer.add_hook(
+                bs.hooks.SaveBestNetwork(
+                    'validation.Accuracy',
+                    filename=self.filename,
+                    name='best weights',
+                    criterion='max'
+                )
+            )
         self.trainer.add_hook(
             bs.hooks.StopAfterThresholdReached(
                 'validation.Accuracy',
                 threshold=self.args.accuracy_threshold,
                 criterion='at_least'
+            )
+        )
+        self.trainer.add_hook(
+            bs.hooks.EarlyStopper(
+                'validation.Accuracy',
+                patience=self.args.patience,
+                criterion='max'
             )
         )
         self.trainer.add_hook(bs.hooks.StopAfterEpoch(self.args.max_num_epochs))
