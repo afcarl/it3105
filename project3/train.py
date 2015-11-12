@@ -21,6 +21,7 @@ class Main(object):
         self.network = None
 
         self.parse_args()
+        print('Running with seed', self.args.seed)
         bs.global_rnd.set_seed(self.args.seed)
 
         self.calculate_filename()
@@ -50,7 +51,7 @@ class Main(object):
             dest='max_num_epochs',
             type=int,
             required=False,
-            default=500
+            default=200
         )
         arg_parser.add_argument(
             '--learning-rate',
@@ -111,7 +112,7 @@ class Main(object):
             dest='patience',
             type=int,
             required=False,
-            default=50
+            default=10
         )
         arg_parser.add_argument(
             '--disable-saving',
@@ -120,6 +121,15 @@ class Main(object):
             const=True,
             required=False,
             help='Add this flag to disable saving of the resulting network',
+            default=False
+        )
+        arg_parser.add_argument(
+            '--progress-bar',
+            dest='progress_bar',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Add this flag to show a progress bar during training',
             default=False
         )
         self.args = arg_parser.parse_args()
@@ -208,12 +218,12 @@ class Main(object):
                 momentum=self.args.momentum
             )
         )
-        self.trainer.add_hook(bs.hooks.ProgressBar())
-        scorers = [bs.scorers.Accuracy(out_name='Output.outputs.predictions')]
+        if self.args.progress_bar:
+            self.trainer.add_hook(bs.hooks.ProgressBar())
         self.trainer.add_hook(
             bs.hooks.MonitorScores(
                 'valid_getter',
-                scorers,
+                [bs.scorers.Accuracy(out_name='Output.outputs.predictions')],
                 name='validation'
             )
         )
@@ -230,7 +240,7 @@ class Main(object):
             bs.hooks.StopAfterThresholdReached(
                 'validation.Accuracy',
                 threshold=self.args.accuracy_threshold,
-                criterion='at_least'
+                criterion='min'
             )
         )
         self.trainer.add_hook(
