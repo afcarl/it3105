@@ -67,7 +67,7 @@ class Classify(object):
             default=False
         )
         arg_parser.add_argument(
-            '-t',
+            '-tr',
             '--training',
             dest='training',
             nargs='?',
@@ -86,7 +86,16 @@ class Classify(object):
             help='Run the network on the validation set',
             default=False
         )
-        """
+        arg_parser.add_argument(
+            '-te',
+            '--test',
+            dest='test',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Run the network on the test set',
+            default=False
+        )
         arg_parser.add_argument(
             '-d',
             '--demo',
@@ -94,10 +103,9 @@ class Classify(object):
             nargs='?',
             const=True,
             required=False,
-            help='Run the network on the demo set',
+            help='Run the network on the demo preparation set',
             default=False
         )
-        """
 
         self.args = arg_parser.parse_args()
         self.network_filename = self.args.network_filename
@@ -110,7 +118,7 @@ class Classify(object):
         return self.mnist_ds
 
     def parse_images(self):
-        if self.args.training or self.args.validation:
+        if self.args.training or self.args.validation or self.args.test:
             self.fetch_mnist_data()
 
         if self.args.training:
@@ -125,6 +133,12 @@ class Classify(object):
             y_va = self.mnist_ds['validation']['targets'][:]
             for x in x_va[0]:
                 self.sets['validation'].append(x)
+        if self.args.test:
+            self.sets['test'] = []
+            x_te = self.mnist_ds['test']['default'][:]
+            y_te = self.mnist_ds['test']['targets'][:]
+            for x in x_te[0]:
+                self.sets['test'].append(x)
 
         if self.args.input:
             self.sets['input'] = []
