@@ -5,6 +5,8 @@ import argparse
 import brainstorm as bs
 import img_helper
 import numpy as np
+import os
+import h5py
 
 
 class Classify(object):
@@ -12,13 +14,18 @@ class Classify(object):
         self.args = None
         self.network_filename = None
         self.network = None
-        self.images = []
+        self.mnist_ds = None
+        self.sets = {}
 
         self.parse_args()
         self.parse_images()
         self.initialize_network()
-        for image in self.images:
-            self.classify(image)
+
+        for set_name, images in self.sets.iteritems():
+            if self.args.print_set_names:
+                print(set_name)
+            for image in images:
+                self.classify(image)
 
     def parse_args(self):
         arg_parser = argparse.ArgumentParser()
@@ -35,11 +42,12 @@ class Classify(object):
             '--input',
             dest='input',
             type=str,
-            required=True,
+            required=False,
+            default='',
             help='Name of the png input file. Can also be a file with a list of png file names.'
         )
         arg_parser.add_argument(
-            '-p',
+            '-a',
             '--print-ascii',
             dest='print_ascii',
             nargs='?',
@@ -49,22 +57,81 @@ class Classify(object):
             default=False
         )
         arg_parser.add_argument(
-            '-m',
-            '--mode',
-            dest='mode',
-            choices=['one', 'many'],
+            '-s',
+            '--print-set-names',
+            dest='print_set_names',
+            nargs='?',
+            const=True,
             required=False,
-            default='one'
+            help='Print the set name before the output for that set',
+            default=False
         )
+        arg_parser.add_argument(
+            '-t',
+            '--training',
+            dest='training',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Run the network on the training set',
+            default=False
+        )
+        arg_parser.add_argument(
+            '-v',
+            '--validation',
+            dest='validation',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Run the network on the validation set',
+            default=False
+        )
+        """
+        arg_parser.add_argument(
+            '-d',
+            '--demo',
+            dest='demo',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Run the network on the demo set',
+            default=False
+        )
+        """
 
         self.args = arg_parser.parse_args()
         self.network_filename = self.args.network_filename
 
+    def fetch_mnist_data(self):
+        if self.mnist_ds is None:
+            data_dir = '.'
+            data_file = os.path.join(data_dir, 'MNIST.hdf5')
+            self.mnist_ds = h5py.File(data_file, 'r')['normalized_split']
+        return self.mnist_ds
+
     def parse_images(self):
+        if self.args.training or self.args.validation:
+            self.fetch_mnist_data()
+
+        if self.args.training:
+            self.sets['training'] = []
+            x_tr = self.mnist_ds['training']['default'][:]
+            y_tr = self.mnist_ds['training']['targets'][:]
+            for x in x_tr[0]:
+                self.sets['training'].append(x)
+        if self.args.validation:
+            self.sets['validation'] = []
+            x_va = self.mnist_ds['validation']['default'][:]
+            y_va = self.mnist_ds['validation']['targets'][:]
+            for x in x_va[0]:
+                self.sets['validation'].append(x)
+
+        if self.args.input:
+            self.sets['input'] = []
         if self.args.input.endswith('.png'):
             image_array = img_helper.read_image(self.args.input)
-            self.images.append(image_array)
-        else:
+            self.sets['input'].append(image_array)
+        elif self.args.input:
             f = open(self.args.input)
             lines = []
             for line in f:
@@ -75,7 +142,7 @@ class Classify(object):
                 for file_name in lines:
                     if file_name.endswith('.png'):
                         image_array = img_helper.read_image(file_name)
-                        self.images.append(image_array)
+                        self.sets['input'].append(image_array)
             else:
                 pass
                 # TODO: parse text file with one image for each line
