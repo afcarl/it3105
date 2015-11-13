@@ -240,7 +240,7 @@ class Main(object):
             bs.hooks.StopAfterThresholdReached(
                 'validation.Accuracy',
                 threshold=self.args.accuracy_threshold,
-                criterion='min'
+                criterion='max'
             )
         )
         self.trainer.add_hook(
