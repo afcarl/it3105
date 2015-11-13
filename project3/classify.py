@@ -103,7 +103,7 @@ class Classify(object):
             nargs='?',
             const=True,
             required=False,
-            help='Run the network on the demo preparation set',
+            help='Run the network on the demo set',
             default=False
         )
 
@@ -123,22 +123,39 @@ class Classify(object):
 
         if self.args.training:
             self.sets['training'] = []
-            x_tr = self.mnist_ds['training']['default'][:]
-            y_tr = self.mnist_ds['training']['targets'][:]
-            for x in x_tr[0]:
+            x_training = self.mnist_ds['training']['default'][:]
+            y_training = self.mnist_ds['training']['targets'][:]
+            for x in x_training[0]:
                 self.sets['training'].append(x)
         if self.args.validation:
             self.sets['validation'] = []
-            x_va = self.mnist_ds['validation']['default'][:]
-            y_va = self.mnist_ds['validation']['targets'][:]
-            for x in x_va[0]:
+            x_validation = self.mnist_ds['validation']['default'][:]
+            y_validation = self.mnist_ds['validation']['targets'][:]
+            for x in x_validation[0]:
                 self.sets['validation'].append(x)
         if self.args.test:
             self.sets['test'] = []
-            x_te = self.mnist_ds['test']['default'][:]
-            y_te = self.mnist_ds['test']['targets'][:]
-            for x in x_te[0]:
+            x_test = self.mnist_ds['test']['default'][:]
+            y_test = self.mnist_ds['test']['targets'][:]
+            for x in x_test[0]:
                 self.sets['test'].append(x)
+        if self.args.demo:
+            import pickle
+            demo_set_filename = 'demo_python2'
+            demo_set = pickle.load(open(demo_set_filename, "rb"))
+
+            for i in range(len(demo_set[0])):
+                demo_set[0][i] = map(lambda value: value / 255.0, demo_set[0][i])
+                adapted_image_array = []
+                for row_idx in range(28):
+                    adapted_image_array.append([])
+                    for col_idx in range(28):
+                        adapted_image_array[row_idx].append(demo_set[0][i][row_idx * 28 + col_idx])
+                demo_set[0][i] = adapted_image_array
+
+            x_demo = demo_set[0]
+            y_demo = map(int, demo_set[1])
+            self.sets['demo'] = x_demo
 
         if self.args.input:
             self.sets['input'] = []
