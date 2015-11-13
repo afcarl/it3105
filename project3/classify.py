@@ -21,11 +21,18 @@ class Classify(object):
         self.parse_images()
         self.initialize_network()
 
-        for set_name, images in self.sets.iteritems():
+        for set_name, set_dict in self.sets.iteritems():
             if self.args.print_set_names:
                 print(set_name)
-            for image in images:
-                self.classify(image)
+            for i in range(len(set_dict['images'])):
+                image = set_dict['images'][i]
+                answer = self.classify(image)
+                if self.args.compare and 'correct_answers' in set_dict:
+                    correct_answer = set_dict['correct_answers'][i]
+                    if answer == correct_answer:
+                        print('correct')
+                    else:
+                        print('wrong! should be {}'.format(correct_answer))
 
     def parse_args(self):
         arg_parser = argparse.ArgumentParser()
@@ -64,6 +71,16 @@ class Classify(object):
             const=True,
             required=False,
             help='Print the set name before the output for that set',
+            default=False
+        )
+        arg_parser.add_argument(
+            '-c',
+            '--compare',
+            dest='compare',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Compare each classification with the correct answer',
             default=False
         )
         arg_parser.add_argument(
@@ -122,23 +139,23 @@ class Classify(object):
             self.fetch_mnist_data()
 
         if self.args.training:
-            self.sets['training'] = []
+            self.sets['training'] = {'images': []}
             x_training = self.mnist_ds['training']['default'][:]
             y_training = self.mnist_ds['training']['targets'][:]
             for x in x_training[0]:
-                self.sets['training'].append(x)
+                self.sets['training']['images'].append(x)
         if self.args.validation:
-            self.sets['validation'] = []
+            self.sets['validation'] = {'images': []}
             x_validation = self.mnist_ds['validation']['default'][:]
             y_validation = self.mnist_ds['validation']['targets'][:]
             for x in x_validation[0]:
-                self.sets['validation'].append(x)
+                self.sets['validation']['images'].append(x)
         if self.args.test:
-            self.sets['test'] = []
+            self.sets['test'] = {'images': []}
             x_test = self.mnist_ds['test']['default'][:]
             y_test = self.mnist_ds['test']['targets'][:]
             for x in x_test[0]:
-                self.sets['test'].append(x)
+                self.sets['test']['images'].append(x)
         if self.args.demo:
             import pickle
             demo_set_filename = 'demo_python2'
@@ -155,13 +172,13 @@ class Classify(object):
 
             x_demo = demo_set[0]
             y_demo = map(int, demo_set[1])
-            self.sets['demo'] = x_demo
+            self.sets['demo'] = {'images': x_demo, 'correct_answers': y_demo}
 
         if self.args.input:
-            self.sets['input'] = []
+            self.sets['input'] = {'images': []}
         if self.args.input.endswith('.png'):
             image_array = img_helper.read_image(self.args.input)
-            self.sets['input'].append(image_array)
+            self.sets['input']['images'].append(image_array)
         elif self.args.input:
             f = open(self.args.input)
             lines = []
@@ -173,7 +190,7 @@ class Classify(object):
                 for file_name in lines:
                     if file_name.endswith('.png'):
                         image_array = img_helper.read_image(file_name)
-                        self.sets['input'].append(image_array)
+                        self.sets['input']['images'].append(image_array)
             else:
                 pass
                 # TODO: parse text file with one image for each line
@@ -206,6 +223,7 @@ class Classify(object):
         outputs = self.network.get('FC.outputs.default')
         max_output_index = np.argmax(outputs[0][0])
         print(max_output_index)
+        return max_output_index
 
 
 if __name__ == '__main__':
