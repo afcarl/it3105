@@ -11,17 +11,18 @@ import h5py
 
 
 class Classify(object):
-    def __init__(self):
+    def __init__(self, init=True):
         self.args = None
         self.network_filename = None
         self.network = None
         self.mnist_ds = None
         self.sets = {}
 
-        self.parse_args()
-        self.parse_images()
-        self.initialize_network()
-        self.run()
+        if init:
+            self.parse_args()
+            self.parse_images()
+            self.initialize_network()
+            self.run()
 
     def parse_args(self):
         arg_parser = argparse.ArgumentParser()
@@ -224,7 +225,7 @@ class Classify(object):
         self.network.set_handler(PyCudaHandler())
 
     def classify(self, image):
-        if self.args.print_ascii:
+        if self.args and self.args.print_ascii:
             self.print_ascii(image)
         data = np.zeros(shape=(1, 1, 28, 28, 1))
         adapted_input_array = np.array(image)
@@ -237,7 +238,7 @@ class Classify(object):
         self.network.forward_pass()
         outputs = self.network.get('FC.outputs.default')
         max_output_index = np.argmax(outputs[0][0])
-        if self.args.print_results:
+        if self.args and self.args.print_results:
             print(max_output_index)
         return max_output_index
 
