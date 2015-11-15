@@ -3,7 +3,6 @@
 from __future__ import division, print_function, unicode_literals
 import argparse
 import brainstorm as bs
-from brainstorm.handlers import PyCudaHandler
 import img_helper
 import numpy as np
 import os
@@ -133,6 +132,15 @@ class Classify(object):
             help='Show every resulting integer',
             default=False
         )
+        arg_parser.add_argument(
+            '--disable-cuda',
+            dest='disable_cuda',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Add this flag to use the CPU instead of the GPU',
+            default=False
+        )
 
         self.args = arg_parser.parse_args()
         self.network_filename = self.args.network_filename
@@ -222,7 +230,9 @@ class Classify(object):
 
     def initialize_network(self):
         self.network = bs.Network.from_hdf5(self.network_filename)
-        self.network.set_handler(PyCudaHandler())
+        if not self.args.disable_cuda:
+            from brainstorm.handlers import PyCudaHandler
+            self.network.set_handler(PyCudaHandler())
 
     def classify(self, image):
         if self.args and self.args.print_ascii:

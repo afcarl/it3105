@@ -6,7 +6,6 @@ import h5py
 import argparse
 import brainstorm as bs
 from brainstorm.data_iterators import Minibatches
-from brainstorm.handlers import PyCudaHandler
 import re
 
 
@@ -124,6 +123,15 @@ class Main(object):
             default=False
         )
         arg_parser.add_argument(
+            '--disable-cuda',
+            dest='disable_cuda',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Add this flag to use the CPU instead of the GPU',
+            default=False
+        )
+        arg_parser.add_argument(
             '--progress-bar',
             dest='progress_bar',
             nargs='?',
@@ -206,8 +214,9 @@ class Main(object):
         layer_spec = layer_spec >> fc
 
         self.network = bs.Network.from_layer(layer_spec)
-
-        self.network.set_handler(PyCudaHandler())
+        if not self.args.disable_cuda:
+            from brainstorm.handlers import PyCudaHandler
+            self.network.set_handler(PyCudaHandler())
         self.network.initialize(bs.initializers.Gaussian(0.01))
         self.network.set_weight_modifiers({"FC": bs.value_modifiers.ConstrainL2Norm(1)})
 
