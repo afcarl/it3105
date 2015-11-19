@@ -56,9 +56,6 @@ description: This description.
 Variants
 ========
 
-normalized_full: Contains 'training' and 'test' sets. Image data has been
-normalized by dividing all pixel values by 255.
-
 normalized_split: Contains 'training' (first 50K out of the full training
 set), 'validation' (remaining 10K out of the full training set) and
 'test' sets. Image data has been normalized by dividing all pixel values by
@@ -75,19 +72,6 @@ group.create_dataset(name='targets', data=train_targets, compression='gzip')
 group = variant.create_group('validation')
 group.create_dataset(name='default', data=valid_inputs, compression='gzip')
 group.create_dataset(name='targets', data=valid_targets, compression='gzip')
-
-group = variant.create_group('test')
-group.create_dataset(name='default', data=test_inputs, compression='gzip')
-group.create_dataset(name='targets', data=test_targets, compression='gzip')
-
-
-train_inputs = np.concatenate((train_inputs, valid_inputs), axis=1)
-train_targets = np.concatenate((train_targets, valid_targets), axis=1)
-
-variant = f.create_group('normalized_full')
-group = variant.create_group('training')
-group.create_dataset(name='default', data=train_inputs, compression='gzip')
-group.create_dataset(name='targets', data=train_targets, compression='gzip')
 
 group = variant.create_group('test')
 group.create_dataset(name='default', data=test_inputs, compression='gzip')
