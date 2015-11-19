@@ -81,5 +81,5 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    for x in xrange(100):
+    for i in xrange(100):
         Main()

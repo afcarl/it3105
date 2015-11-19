@@ -4,7 +4,6 @@ import sys
 from os import path
 import h5py
 import numpy as np
-import gzip
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
