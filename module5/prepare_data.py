@@ -37,32 +37,6 @@ test_inputs, test_targets = \
 
 print("Creating HDF5 dataset ...")
 f = h5py.File(hdf_file, 'w')
-description = """
-The MNIST handwritten digit database is a preprocessed subset of NIST's
-Special Database 3 and Special Database 1. It consists of 70000 28x28 binary
-images of handwritten digits (0-9), with approximately 7000 images per class.
-There are 60000 training images and 10000 test images.
-
-The dataset was obtained from the link:
-http://deeplearning.net/data/mnist/mnist.pkl.gz
-which hosts a normalized version of the data originally from:
-http://yann.lecun.com/exdb/mnist/
-
-Attributes
-==========
-
-description: This description.
-
-Variants
-========
-
-normalized_split: Contains 'training' (first 50K out of the full training
-set), 'validation' (remaining 10K out of the full training set) and
-'test' sets. Image data has been normalized by dividing all pixel values by
-255.
-
-"""
-f.attrs['description'] = description
 
 variant = f.create_group('normalized_split')
 group = variant.create_group('training')
