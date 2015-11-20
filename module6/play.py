@@ -9,6 +9,7 @@ import h5py
 import sys
 from os import path
 from prepare_data import PrepareData
+from collections import Counter
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -20,6 +21,7 @@ class Play(object):
         self.args = None
         self.network_filename = None
         self.network = None
+        self.max_tile_value = None
 
         if init:
             self.parse_args()
@@ -54,7 +56,7 @@ class Play(object):
             nargs='?',
             const=True,
             required=False,
-            help='Show every resulting integer',
+            help='Show every board state',
             default=False
         )
         arg_parser.add_argument(
@@ -96,8 +98,9 @@ class Play(object):
         board.place_new_value_randomly()
 
         for i in xrange(2000):
-            print('iteration', i)
-            print(board)
+            if self.args.print_results:
+                print('iteration', i)
+                print(board)
             directions = self.choose_direction(board.board_values)
             has_moved = False
             for direction in directions:
@@ -106,9 +109,22 @@ class Play(object):
                     has_moved = True
                     break
             if not has_moved:
-                print('game over')
+                num_empty_tiles, max_tile_value, tile_sum = board.get_tile_stats()
+                print(max_tile_value)
+                self.max_tile_value = max_tile_value
                 break
             board.place_new_value_randomly()
 
 if __name__ == '__main__':
-    Play()
+    max_tile_values = []
+    for i in xrange(50):
+        p = Play()
+        max_tile_values.append(p.max_tile_value)
+
+    # random play
+
+    max_tile_value_counts = Counter(max_tile_values)
+    print('stats:', max_tile_value_counts)
+
+    #p = scipy.stats.ttest_ind([MY RESULTS], [RANDOM PLAYER RESULTS]).pvalue
+    #num_points = max(0,min(7, ceiling(-log(p,10))))
