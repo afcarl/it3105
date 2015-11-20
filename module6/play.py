@@ -11,7 +11,8 @@ from os import path
 from prepare_data import PrepareData
 from collections import Counter
 import random
-import requests
+import ai2048demo
+
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -147,11 +148,6 @@ class PlayRandomly(object):
         self.max_tile_value = max_tile_value
 
 
-def welch(results_random, results_ai):
-    params = {"results": str(results_random) + " " + str(results_ai), "raw": "1"}
-    resp = requests.post('http://folk.ntnu.no/valerijf/6/', data=params)
-    return resp.text
-
 if __name__ == '__main__':
     random_max_tile_values = []
     print('Random player is playing...')
@@ -171,4 +167,4 @@ if __name__ == '__main__':
     ai_max_tile_value_counts = Counter(ai_max_tile_values)
     print('AI player stats:', ai_max_tile_value_counts)
 
-    print(welch(random_max_tile_values, ai_max_tile_values))
+    print(ai2048demo.welch(random_max_tile_values, ai_max_tile_values))
