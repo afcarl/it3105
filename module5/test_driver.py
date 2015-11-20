@@ -1,7 +1,9 @@
 from blind_test import ann
+import demo
+
+"""
 import unittest
 import pickle
-
 
 class TestAnn(unittest.TestCase):
     def test_ann(self):
@@ -23,3 +25,6 @@ class TestAnn(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+"""
+
+demo.minor_demo(ann)

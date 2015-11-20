@@ -5,7 +5,7 @@ class ann(object):
     @staticmethod
     def blind_test(feature_sets):
         classifier = Classify(init=False)
-        classifier.network_filename = 'hl2__sizes-300-500-__acfn-linear-linear-__dr-0.2-0.5-0.5-__lr0.1__mb100__mom0.9__seed10.hdf5'
+        classifier.network_filename = 'hl1__sizes-200-__acfn-rel-__dr-0.2-0.5-__lr0.1__mb100__mom0.9__seed1.hdf5'
         classifier.initialize_network()
 
         labels = []

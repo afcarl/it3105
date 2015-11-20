@@ -230,7 +230,7 @@ class Classify(object):
 
     def initialize_network(self):
         self.network = bs.Network.from_hdf5(self.network_filename)
-        if not self.args.disable_cuda:
+        if self.args is not None and not self.args.disable_cuda:
             from brainstorm.handlers import PyCudaHandler
             self.network.set_handler(PyCudaHandler())
 
