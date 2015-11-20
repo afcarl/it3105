@@ -10,6 +10,8 @@ import sys
 from os import path
 from prepare_data import PrepareData
 from collections import Counter
+import random
+import requests
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -109,22 +111,64 @@ class Play(object):
                     has_moved = True
                     break
             if not has_moved:
-                num_empty_tiles, max_tile_value, tile_sum = board.get_tile_stats()
-                print(max_tile_value)
-                self.max_tile_value = max_tile_value
                 break
             board.place_new_value_randomly()
 
+        num_empty_tiles, max_tile_value, tile_sum = board.get_tile_stats()
+        print(max_tile_value)
+        self.max_tile_value = max_tile_value
+
+
+class PlayRandomly(object):
+    def __init__(self):
+        self.max_tile_value = None
+        self.play_game_randomly()
+
+    def play_game_randomly(self, max_num_moves=2000):
+        board = Board(size=4)
+        board.place_new_value_randomly()
+        for x in xrange(max_num_moves):
+            directions = range(4)
+            random.shuffle(directions)
+            moved = False
+            for direction in directions:
+                if board.can_move(direction):
+                    board.move(direction)
+                    moved = True
+                    break
+
+            if not moved:
+                break
+
+            board.place_new_value_randomly()
+
+        num_empty_tiles, max_tile_value, tile_sum = board.get_tile_stats()
+        print(max_tile_value)
+        self.max_tile_value = max_tile_value
+
+
+def welch(results_random, results_ai):
+    params = {"results": str(results_random) + " " + str(results_ai), "raw": "1"}
+    resp = requests.post('http://folk.ntnu.no/valerijf/6/', data=params)
+    return resp.text
+
 if __name__ == '__main__':
-    max_tile_values = []
+    random_max_tile_values = []
+    print('Random player is playing...')
     for i in xrange(50):
-        p = Play()
-        max_tile_values.append(p.max_tile_value)
+        random_play = PlayRandomly()
+        random_max_tile_values.append(random_play.max_tile_value)
 
-    # random play
+    ai_max_tile_values = []
+    print('AI is playing...')
+    for i in xrange(50):
+        ai_play = Play()
+        ai_max_tile_values.append(ai_play.max_tile_value)
 
-    max_tile_value_counts = Counter(max_tile_values)
-    print('stats:', max_tile_value_counts)
+    random_max_tile_value_counts = Counter(random_max_tile_values)
+    print('random player stats:', random_max_tile_value_counts)
 
-    #p = scipy.stats.ttest_ind([MY RESULTS], [RANDOM PLAYER RESULTS]).pvalue
-    #num_points = max(0,min(7, ceiling(-log(p,10))))
+    ai_max_tile_value_counts = Counter(ai_max_tile_values)
+    print('AI player stats:', ai_max_tile_value_counts)
+
+    print(welch(random_max_tile_values, ai_max_tile_values))
