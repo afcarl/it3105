@@ -18,6 +18,7 @@ class Main(object):
         self.getter_tr = None
         self.getter_va = None
         self.network = None
+        self.input_shape = None
 
         self.parse_args()
         print('Running with seed', self.args.seed)
@@ -140,6 +141,14 @@ class Main(object):
             help='Add this flag to show a progress bar during training',
             default=False
         )
+        arg_parser.add_argument(
+            '-ds',
+            '--data-set',
+            dest='data_set',
+            type=str,
+            required=False,
+            default="2048_1.hdf5"
+        )
         self.args = arg_parser.parse_args()
 
         if self.args.num_hidden_layers != len(self.args.activation_functions):
@@ -179,7 +188,7 @@ class Main(object):
 
     def set_up_iterators(self):
         data_dir = '.'
-        data_file = os.path.join(data_dir, '2048.hdf5')
+        data_file = os.path.join(data_dir, self.args.data_set)
         ds = h5py.File(data_file, 'r')['normalized_split']
         x_tr, y_tr = ds['training']['default'][:], ds['training']['targets'][:]
         x_va, y_va = ds['validation']['default'][:], ds['validation']['targets'][:]
@@ -187,12 +196,13 @@ class Main(object):
         self.getter_tr = Minibatches(self.args.minibatch_size, default=x_tr, targets=y_tr)
         self.getter_va = Minibatches(self.args.minibatch_size, default=x_va, targets=y_va)
 
+        self.input_shape = (len(ds['training']['default'][0][0]), 1)
+
     def set_up_network(self):
-        input_shape = (20, 1)
         num_output_classes = 4  # up, right, down, left
         inp, fc = bs.tools.get_in_out_layers(
             'classification',
-            input_shape,
+            self.input_shape,
             num_output_classes,
             projection_name='FC'
         )
