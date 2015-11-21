@@ -181,7 +181,8 @@ class Main(object):
             '__lr' + str(self.args.learning_rate) +
             '__mb' + str(self.args.minibatch_size) +
             '__mom' + str(self.args.momentum) +
-            '__seed' + str(self.args.seed)
+            '__seed' + str(self.args.seed) +
+            '__ds' + str(self.args.data_set)
         )
         self.filename = re.sub('[^A-Za-z0-9_.]+', '-', self.filename)
         self.filename += ".hdf5"

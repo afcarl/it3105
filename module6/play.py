@@ -25,6 +25,8 @@ class Play(object):
         self.network_filename = None
         self.network = None
         self.max_tile_value = None
+        self.preprocessing_method = None
+        self.input_vector_size = None
 
         if init:
             self.parse_args()
@@ -71,6 +73,14 @@ class Play(object):
             help='Add this flag to use the CPU instead of the GPU',
             default=False
         )
+        self.args = arg_parser.parse_args()
+
+        if 'ds2048_1' in self.args.network_filename:
+            self.preprocessing_method = PrepareData.pre_process1
+            self.input_vector_size = 20
+        else:
+            self.preprocessing_method = PrepareData.pre_process2
+            self.input_vector_size = 39
 
         self.args = arg_parser.parse_args()
         self.network_filename = self.args.network_filename
@@ -82,10 +92,10 @@ class Play(object):
             self.network.set_handler(PyCudaHandler())
 
     def choose_direction(self, board_values_2d):
-        data = np.zeros(shape=(1, 1, 20, 1))
-        processed_input = PrepareData.pre_process(board_values_2d)
+        data = np.zeros(shape=(1, 1, self.input_vector_size, 1))
+        processed_input = self.preprocessing_method(board_values_2d)
         adapted_input_array = np.array(processed_input)
-        adapted_input_array.shape = (20, 1)
+        adapted_input_array.shape = (self.input_vector_size, 1)
         data[0][0] = adapted_input_array
         self.network.provide_external_data({
             'default': data,
