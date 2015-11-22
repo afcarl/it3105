@@ -12,6 +12,8 @@ from prepare_data import PrepareData
 from collections import Counter
 import random
 import ai2048demo
+from copy import deepcopy
+import time
 
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -27,11 +29,14 @@ class Play(object):
         self.max_tile_value = None
         self.preprocessing_method = None
         self.input_vector_size = None
+        self.board_states = None
 
         if init:
             self.parse_args()
             self.initialize_network()
             self.run()
+            if self.args.log_to_file:
+                self.log_to_file()
 
     def parse_args(self):
         arg_parser = argparse.ArgumentParser()
@@ -43,7 +48,6 @@ class Play(object):
             required=True,
             help='Name of the input hdf5 file with the neural network'
         )
-
         arg_parser.add_argument(
             '-st',
             '--stats',
@@ -72,6 +76,17 @@ class Play(object):
             required=False,
             help='Add this flag to use the CPU instead of the GPU',
             default=False
+        )
+        arg_parser.add_argument(
+            '-l',
+            '--log',
+            dest='log_to_file',
+            nargs='?',
+            const=True,
+            required=False,
+            default=False,
+            help='Add this flag if board states should be stored in a file'
+                 ' (that can be played back later with a visualizer)'
         )
         self.args = arg_parser.parse_args()
 
@@ -106,6 +121,7 @@ class Play(object):
         return prioritized_directions
 
     def run(self):
+        self.board_states = []
         board = Board(size=4)
         board.place_new_value_randomly()
 
@@ -113,6 +129,7 @@ class Play(object):
             if self.args.print_results:
                 print('iteration', i)
                 print(board)
+            self.board_states.append(deepcopy(board.board_values))
             directions = self.choose_direction(board.board_values)
             has_moved = False
             for direction in directions:
@@ -127,6 +144,16 @@ class Play(object):
         num_empty_tiles, max_tile_value, tile_sum = board.get_tile_stats()
         print(max_tile_value)
         self.max_tile_value = max_tile_value
+
+    def log_to_file(self):
+        log_filename = 'play_{0}.log'.format(time.time())
+        file_path = os.path.join('./plays', log_filename)
+        print('Logging to file', file_path)
+        board_state_strings = map(str, self.board_states)
+        f = open(file_path, "w")
+        for board_state_string in board_state_strings:
+            f.write("%s\n" % board_state_string)
+        f.close()
 
 
 class PlayRandomly(object):

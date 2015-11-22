@@ -1,0 +1,1 @@
+This is the folder where generated data for the data set is stored. Each run has its own pickled file.
