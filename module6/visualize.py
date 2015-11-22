@@ -10,6 +10,10 @@ import sys
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from module4.gfx import Gfx
+import pygame
+
+
+#pygame.image.init()
 
 
 class Main(object):
@@ -31,6 +35,16 @@ class Main(object):
             type=str,
             required=True
         )
+        arg_parser.add_argument(
+            '-s',
+            '--store-screenshots',
+            dest='store_screenshots',
+            nargs='?',
+            const=True,
+            required=False,
+            help='Add this flag to store every frame as an image file (JPG)',
+            default=False
+        )
         self.args = arg_parser.parse_args()
 
     def read(self):
@@ -46,8 +60,12 @@ class Main(object):
             self.board_states.append(board_values)
 
     def visualize(self):
-        for board_values in self.board_states:
+        for i in range(len(self.board_states)):
+            board_values = self.board_states[i]
             self.gfx.draw(board_values)
+            if self.args.store_screenshots:
+                file_name = '{0}_{1}.png'.format(self.args.input_filename, i)
+                pygame.image.save(self.gfx.screen, file_name)
 
 
 if __name__ == '__main__':
