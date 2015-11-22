@@ -51,7 +51,7 @@ class Main(object):
             dest='max_num_epochs',
             type=int,
             required=False,
-            default=20
+            default=100
         )
         arg_parser.add_argument(
             '--learning-rate',
@@ -112,7 +112,7 @@ class Main(object):
             dest='patience',
             type=int,
             required=False,
-            default=10
+            default=20
         )
         arg_parser.add_argument(
             '--disable-saving',
@@ -147,7 +147,7 @@ class Main(object):
             dest='data_set',
             type=str,
             required=False,
-            default="2048_1.hdf5"
+            default="2048_2.hdf5"
         )
         self.args = arg_parser.parse_args()
 

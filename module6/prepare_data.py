@@ -85,6 +85,16 @@ class PrepareData(object):
         return x_vector
 
     @staticmethod
+    def get_avg_position(row_or_col):
+        numerator = 0
+        axis = [-0.66, -0.33, 0.33, 0.66]
+        for i in range(len(row_or_col)):
+            x = 1 if row_or_col[i] > 0 else 0
+            y = axis[i]
+            numerator += x * y
+        return numerator
+
+    @staticmethod
     def pre_process2(board_values_2d):
         board = Board(size=4, board_values=board_values_2d)
         possible_moves = board.get_possible_moves()
@@ -129,6 +139,23 @@ class PrepareData(object):
                     if i in (0, 3) and j in (0, 3):
                         is_max_tile_in_corner = True
         x_vector.append(1 if is_max_tile_in_corner else 0)
+
+        # average tile position (x)
+        avg_position_x = 0
+        for row in board.board_values:
+            avg_position_x += PrepareData.get_avg_position(row)
+        avg_position_x /= board.size
+        x_vector.append(max(avg_position_x, 0))  # how far east from the center
+        x_vector.append(abs(min(avg_position_x, 0)))  # how far west from the center
+
+        # average tile position (y)
+        avg_position_y = 0
+        for i in range(board.size):
+            column = board.get_column(i)
+            avg_position_y += PrepareData.get_avg_position(column)
+        avg_position_y /= board.size
+        x_vector.append(max(avg_position_y, 0))  # how far south from the center
+        x_vector.append(abs(min(avg_position_y, 0)))  # how far north from the center
 
         return x_vector
 
