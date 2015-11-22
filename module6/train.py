@@ -89,7 +89,7 @@ class Main(object):
             nargs='+',
             type=int,
             required=False,
-            default=[40]
+            default=[10]
         )
         arg_parser.add_argument(
             '--dropout-probabilities',
