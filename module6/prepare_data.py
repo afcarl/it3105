@@ -60,6 +60,11 @@ class PrepareData(object):
         self.data_set = [board_values, moves]
 
     @staticmethod
+    def get_vector_size(preprocessing_method):
+        board_values_2d = [[2, 0, 0, 0]] * 4
+        return len(preprocessing_method(board_values_2d))
+
+    @staticmethod
     def pre_process1(board_values_2d):
         board = Board(size=4, board_values=board_values_2d)
         possible_moves = board.get_possible_moves()

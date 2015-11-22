@@ -77,10 +77,9 @@ class Play(object):
 
         if 'ds2048_1' in self.args.network_filename:
             self.preprocessing_method = PrepareData.pre_process1
-            self.input_vector_size = 20
         else:
             self.preprocessing_method = PrepareData.pre_process2
-            self.input_vector_size = 39
+        self.input_vector_size = PrepareData.get_vector_size(self.preprocessing_method)
 
         self.args = arg_parser.parse_args()
         self.network_filename = self.args.network_filename
@@ -92,13 +91,13 @@ class Play(object):
             self.network.set_handler(PyCudaHandler())
 
     def choose_direction(self, board_values_2d):
-        data = np.zeros(shape=(1, 1, self.input_vector_size, 1))
         processed_input = self.preprocessing_method(board_values_2d)
+        input_data = np.zeros(shape=(1, 1, self.input_vector_size, 1))
         adapted_input_array = np.array(processed_input)
         adapted_input_array.shape = (self.input_vector_size, 1)
-        data[0][0] = adapted_input_array
+        input_data[0][0] = adapted_input_array
         self.network.provide_external_data({
-            'default': data,
+            'default': input_data,
             'targets': np.zeros(shape=(1, 1, 1))
         })
         self.network.forward_pass()
