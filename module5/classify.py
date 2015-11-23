@@ -93,16 +93,6 @@ class Classify(object):
             default=False
         )
         arg_parser.add_argument(
-            '-te',
-            '--test',
-            dest='test',
-            nargs='?',
-            const=True,
-            required=False,
-            help='Run the network on the test set',
-            default=False
-        )
-        arg_parser.add_argument(
             '-d',
             '--demo',
             dest='demo',
@@ -153,7 +143,7 @@ class Classify(object):
         return self.mnist_ds
 
     def parse_images(self):
-        if self.args.training or self.args.validation or self.args.test:
+        if self.args.training or self.args.validation:
             self.fetch_mnist_data()
 
         if self.args.training:
@@ -172,31 +162,26 @@ class Classify(object):
                 self.sets['validation']['images'].append(x)
             for y in y_validation[0]:
                 self.sets['validation']['correct_answers'].append(y[0])
-        if self.args.test:
-            self.sets['test'] = {'images': [], 'correct_answers': []}
-            x_test = self.mnist_ds['test']['default'][:]
-            y_test = self.mnist_ds['test']['targets'][:]
-            for x in x_test[0]:
-                self.sets['test']['images'].append(x)
-            for y in y_test[0]:
-                self.sets['test']['correct_answers'].append(y[0])
         if self.args.demo:
+            """
             import pickle
             demo_set_filename = 'demo_python2'
             demo_set = pickle.load(open(demo_set_filename, "rb"))
+            """
 
-            for i in range(len(demo_set[0])):
-                demo_set[0][i] = map(lambda value: value / 255.0, demo_set[0][i])
+            from demo import load_flat_text_cases
+            demo_inputs, demo_targets = load_flat_text_cases('demo100_text.txt')
+
+            for i in range(len(demo_inputs)):
+                demo_inputs[i] = map(lambda value: value / 255.0, demo_inputs[i])
                 adapted_image_array = []
                 for row_idx in range(28):
                     adapted_image_array.append([])
                     for col_idx in range(28):
-                        adapted_image_array[row_idx].append(demo_set[0][i][row_idx * 28 + col_idx])
-                demo_set[0][i] = adapted_image_array
+                        adapted_image_array[row_idx].append(demo_inputs[i][row_idx * 28 + col_idx])
+                demo_inputs[i] = adapted_image_array
 
-            x_demo = demo_set[0]
-            y_demo = map(int, demo_set[1])
-            self.sets['demo'] = {'images': x_demo, 'correct_answers': y_demo}
+            self.sets['demo'] = {'images': demo_inputs, 'correct_answers': demo_targets}
 
         if self.args.input:
             self.sets['input'] = {'images': []}
