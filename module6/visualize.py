@@ -13,10 +13,12 @@ from module4.gfx import Gfx
 import pygame
 
 
-#pygame.image.init()
-
-
 class Main(object):
+    """
+    This visualizer can show a run of the 2048 game played by the AI. Optionally, it can also store
+    each frame as a PNG image file.
+    """
+
     def __init__(self):
         self.args = None
         self.board_states = None
@@ -42,7 +44,7 @@ class Main(object):
             nargs='?',
             const=True,
             required=False,
-            help='Add this flag to store every frame as an image file (JPG)',
+            help='Add this flag to store every frame as an image file (PNG)',
             default=False
         )
         self.args = arg_parser.parse_args()

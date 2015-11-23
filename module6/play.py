@@ -22,6 +22,10 @@ from module4.board import Board
 
 
 class Play(object):
+    """
+    This class takes in a network file and plays the 2048 game with that ANN. It can also log the
+    board states to a log file, which can later be visualized using visualize.py
+    """
     def __init__(self, init=True):
         self.args = None
         self.network_filename = None
@@ -157,6 +161,9 @@ class Play(object):
 
 
 class PlayRandomly(object):
+    """
+    This class plays the 2048 game with merely random moves
+    """
     def __init__(self):
         self.max_tile_value = None
         self.play_game_randomly()

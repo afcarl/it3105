@@ -11,6 +11,9 @@ from module4.board_printer import BoardPrinter
 
 
 class Main(object):
+    """
+    This is the 2048 player that generates the data set
+    """
     def __init__(self):
         self.gfx = BoardPrinter()
         self.board_states = []

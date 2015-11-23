@@ -13,6 +13,13 @@ from module4.board import Board
 
 
 class PrepareData(object):
+    """
+    This class is for:
+    * reading the data
+    * compiling a data set with training data and validation data
+    * preprocessing the data
+    * storing the data in an HDF5 file, which the training module can understand
+    """
     def __init__(self):
         self.args = None
         self.data_set = None
