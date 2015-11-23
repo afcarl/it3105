@@ -10,6 +10,14 @@ import re
 
 
 class Main(object):
+    """
+    The training module basically takes in
+    * a set of parameters about the network topology
+    * a few parameters that decide when to stop training
+    * a seed for the PRNG
+    Then an ANN is trained based on those parameters. The resulting network is stored in a HDF5
+    file with a file name that corresponds to the selected parameters.
+    """
     def __init__(self):
 
         self.args = None

@@ -2,6 +2,9 @@ from classify import Classify
 
 
 class ann(object):
+    """
+    This class has only a method that takes in a set of images and returns the classified labels
+    """
     @staticmethod
     def blind_test(feature_sets):
         classifier = Classify(init=False)

@@ -6,6 +6,11 @@ import os
 from demo import load_flat_text_cases
 import numpy as np
 
+"""
+This python file reads the flat mnist txt files, preprocesses it and finally saves it in a format
+that the training module can read
+"""
+
 data_dir = '.'
 mnist_training_file_path = os.path.join(data_dir, 'all_flat_mnist_training_cases_text.txt')
 mnist_validation_file_path = os.path.join(data_dir, 'all_flat_mnist_testing_cases_text.txt')

@@ -5,7 +5,11 @@ import argparse
 import brainstorm as bs
 
 
-class Main(object):
+class Draw(object):
+    """
+    This class can take in the name of a trained network and store a PNG image file that visualizes
+    the topology
+    """
     def __init__(self):
 
         self.args = None
@@ -34,4 +38,4 @@ class Main(object):
         bs.tools.draw_network(network, file_name=self.output_filename)
 
 if __name__ == '__main__':
-    Main()
+    Draw()

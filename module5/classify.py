@@ -10,6 +10,15 @@ import h5py
 
 
 class Classify(object):
+    """
+    This class is used for testing the trained ANNs. It can test the networks on:
+    * training input
+    * validation input
+    * demo input
+    * custom input (either a single png file or a list of png file names)
+
+    It can show images, classified labels, check correctness and show accuracy stats
+    """
     def __init__(self, init=True):
         self.args = None
         self.network_filename = None
